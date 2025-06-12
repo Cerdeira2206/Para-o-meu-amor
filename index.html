@@ -81,12 +81,57 @@
     position: relative;
     z-index: 10;
   }
+  
+  /* Título com animação de chuva de corações */
+  .title-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  .hearts {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200%;
+    height: 60px;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .heart {
+    position: absolute;
+    color: #d81e5b;
+    font-size: 1.6rem;
+    animation-name: fall;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  @keyframes fall {
+    0% {
+      top: -60px;
+      opacity: 0;
+      transform: translateX(0) rotate(0deg);
+    }
+    10% {
+      opacity: 1;
+    }
+    100% {
+      top: 120px;
+      opacity: 0;
+      transform: translateX(50px) rotate(360deg);
+    }
+  }
+
   h1.content-title {
     font-weight: 900;
     font-size: 3rem;
     margin-bottom: 16px;
     color: #b62859;
     letter-spacing: 1.4px;
+    position: relative;
+    z-index: 5;
   }
   h2 {
     margin-top: 12px;
@@ -213,7 +258,10 @@
 <div id="siteContent" aria-hidden="true" style="display:none;">
   <main class="container" role="main" aria-label="Mensagem de amor para Thaylla Mariane">
     <div class="heart" aria-hidden="true">❤</div>
-    <h1 class="content-title">Feliz dia dos namorados</h1>
+    <div class="title-container">
+      <h1 class="content-title">Feliz dia dos namorados</h1>
+      <div class="hearts" aria-hidden="true"></div>
+    </div>
     <h2>Nosso amor desde 27/09/2023</h2>
     <p class="message" aria-live="polite">
       "Ao meu doce amor, Thaylla Mariane,<br><br>
@@ -268,6 +316,7 @@ function openEnvelope() {
     siteContent.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'auto';
     startPhotoAnimation();
+    startHeartsAnimation();
   }, 1200);
 }
 
@@ -496,6 +545,36 @@ function startPhotoAnimation() {
   animatePhotos();
 }
 
+/* Animação de corações caindo no título */
+const heartsContainerSelector = ".hearts";
+
+function createHeart() {
+  const heart = document.createElement("span");
+  heart.textContent = "❤";
+  heart.className = "heart";
+  heart.style.left = Math.random() * 100 + "%";
+  heart.style.animationDuration = 3 + Math.random() * 3 + "s";
+  heart.style.fontSize = 12 + Math.random() * 16 + "px";
+  heart.style.opacity = Math.random() * 0.7 + 0.3;
+  heart.style.animationDelay = Math.random() * 3 + "s";
+  return heart;
+}
+
+function startHeartsAnimation() {
+  const container = document.querySelector(heartsContainerSelector);
+  if (!container) return;
+
+  // Limpar corações existentes antes de criar novos
+  container.innerHTML = "";
+
+  // Criar corações periodicamente
+  const heartsCount = 15;
+  for (let i = 0; i < heartsCount; i++) {
+    const heart = createHeart();
+    container.appendChild(heart);
+  }
+}
+
 const modal = document.getElementById("modal");
 const modalImage = document.getElementById("modalImage");
 const modalCloseBtn = modal.querySelector(".modal-close");
@@ -528,6 +607,7 @@ document.addEventListener("keydown", e => {
     closeModal();
   }
 });
+
 </script>
 </body>
 </html>

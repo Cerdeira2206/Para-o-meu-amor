@@ -6,24 +6,76 @@
 <title>Para Thaylla Mariane - Nosso Amor</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
-
-  /* Reset e base */
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
   }
-
-  body {
+  body, html {
+    height: 100%;
     font-family: 'Poppins', sans-serif;
     background: linear-gradient(135deg, #fce1e4 0%, #f9d5e5 45%, #fbc8d4 100%);
-    color: #4a1a2a;
-    min-height: 100vh;
-    overflow-x: hidden;
-    position: relative;
-    padding: 32px 16px;
+    overflow: hidden;
   }
 
+  /* Overlay da carta fechada */
+  #envelopeOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #b62859, #a13d6d);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: white;
+    user-select: none;
+    z-index: 9999;
+    flex-direction: column;
+    transition: opacity 0.5s ease;
+  }
+
+  #envelopeOverlay h1 {
+    font-size: 3rem;
+    font-weight: 900;
+    text-shadow: 0 0 8px rgba(255,255,255,0.85);
+    margin-bottom: 20px;
+  }
+  #envelopeOverlay p {
+    font-size: 1.2rem;
+    font-style: italic;
+    max-width: 280px;
+    text-align: center;
+    text-shadow: 0 0 8px rgba(0,0,0,0.25);
+  }
+  #envelopeOverlay .button {
+    margin-top: 30px;
+    border: 2px solid white;
+    padding: 16px 40px;
+    border-radius: 50px;
+    font-weight: 700;
+    background: transparent;
+    color: white;
+    font-size: 1.2rem;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  #envelopeOverlay .button:hover {
+    background-color: white;
+    color: #b62859;
+    cursor: pointer;
+  }
+
+  /* Container do site - inicialmente oculto */
+  #siteContent {
+    display: none;
+    min-height: 100vh;
+    overflow-y: auto;
+    background: linear-gradient(135deg, #fce1e4 0%, #f9d5e5 45%, #fbc8d4 100%);
+    padding: 32px 16px;
+  }
   .container {
     max-width: 700px;
     background: rgba(255 255 255 / 0.85);
@@ -31,26 +83,23 @@
     box-shadow: 0 12px 30px rgba(255, 105, 180, 0.25);
     padding: 40px 32px;
     text-align: center;
+    margin: 0 auto;
     position: relative;
     z-index: 10;
-    margin: 0 auto;
   }
-
-  h1 {
+  h1.content-title {
     font-weight: 900;
     font-size: 3rem;
     margin-bottom: 16px;
     color: #b62859;
     letter-spacing: 1.4px;
   }
-
   h2 {
     margin-top: 12px;
     color: #a13d6d;
     font-weight: 600;
     font-size: 1.4rem;
   }
-
   p.message {
     margin: 32px 0;
     font-size: 1.2rem;
@@ -58,7 +107,6 @@
     color: #6f2a47;
     font-style: italic;
   }
-
   .countdown {
     background: #f9a8d4;
     color: white;
@@ -71,7 +119,6 @@
     user-select: none;
     white-space: pre-line;
   }
-
   footer {
     margin-top: 48px;
     font-size: 0.875rem;
@@ -79,15 +126,12 @@
     position: relative;
     z-index: 10;
   }
-
-  /* Coração animado */
   .heart {
     font-size: 4rem;
     color: #d81e5b;
     animation: beat 1.2s infinite cubic-bezier(.215,.61,.355,1);
     margin-bottom: 24px;
   }
-
   @keyframes beat {
     0%, 100% {
       transform: scale(1);
@@ -96,10 +140,8 @@
       transform: scale(1.2);
     }
   }
-
-  /* Responsivo */
   @media (max-width: 480px) {
-    h1 {
+    h1.content-title {
       font-size: 2.4rem;
     }
     .countdown {
@@ -113,8 +155,6 @@
       font-size: 1rem;
     }
   }
-
-  /* Fotos dinâmicas espalhadas */
   .dynamic-photo {
     position: fixed;
     border-radius: 12px;
@@ -134,8 +174,6 @@
     z-index: 20;
     filter: drop-shadow(0 5px 10px rgba(219, 112, 147, 0.8));
   }
-
-  /* Modal para visualização maior das fotos */
   .modal {
     display: none;
     position: fixed;
@@ -149,11 +187,9 @@
     align-items: center;
     justify-content: center;
   }
-
   .modal.show {
     display: flex;
   }
-
   .modal-content {
     max-width: 90vw;
     max-height: 90vh;
@@ -161,15 +197,12 @@
     box-shadow: 0 8px 30px rgba(219, 112, 147, 0.9);
     outline: none;
   }
-
   .modal-content img {
     width: 100%;
     height: auto;
     border-radius: 20px;
     object-fit: contain;
   }
-
-  /* Botão fechar */
   .modal-close {
     position: absolute;
     top: 24px;
@@ -185,7 +218,6 @@
     box-shadow: 0 4px 15px rgba(219, 112, 147, 0.7);
     transition: background-color 0.3s ease;
   }
-
   .modal-close:hover,
   .modal-close:focus {
     background-color: #a71c45;
@@ -194,9 +226,17 @@
 </style>
 </head>
 <body>
+
+<div id="envelopeOverlay" role="button" tabindex="0" aria-label="Clique para abrir a carta de amor">
+  <h1>Para Thaylla Mariane</h1>
+  <p>Uma surpresa especial. Clique para abrir.</p>
+  <div class="button">Abrir Carta</div>
+</div>
+
+<div id="siteContent" aria-hidden="true">
   <main class="container" role="main" aria-label="Mensagem de amor para Thaylla Mariane">
     <div class="heart" aria-hidden="true">❤</div>
-    <h1>Para Thaylla Mariane</h1>
+    <h1 class="content-title">Para Thaylla Mariane</h1>
     <h2>Nosso amor desde 27/09/2023</h2>
     <p class="message" aria-live="polite">
       "Amar você é descobrir todos os dias motivos para sorrir, para sonhar e para ser feliz. Que nosso amor continue crescendo com ternura, carinho e cumplicidade."
@@ -204,24 +244,42 @@
     <div class="countdown" aria-live="assertive" aria-atomic="true" id="timeTogether" title="Tempo desde o início do namoro">
       Carregando...
     </div>
-
     <footer>
       Feito com amor para você, minha Thaylla Mariane.
     </footer>
   </main>
+</div>
 
-  <!-- Áudio invisível para música de fundo -->
-  <audio id="background-music" src="https://cdn.pixabay.com/download/audio/2022/03/02/audio_7c1fe48e52.mp3?filename=soft-ambient-11525.mp3" autoplay loop preload="auto" aria-label="Música relaxante de amor de fundo" ></audio>
-
-  <!-- Modal para ampliar as fotos -->
-  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Visualização da foto ampliada">
-    <button class="modal-close" aria-label="Fechar visualização">&times;</button>
-    <div class="modal-content" tabindex="0">
-      <img src="" alt="" id="modalImage" />
-    </div>
+<!-- Modal para ampliar as fotos -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Visualização da foto ampliada">
+  <button class="modal-close" aria-label="Fechar visualização">&times;</button>
+  <div class="modal-content" tabindex="0">
+    <img src="" alt="" id="modalImage" />
   </div>
+</div>
 
 <script>
+  const envelopeOverlay = document.getElementById('envelopeOverlay');
+  const siteContent = document.getElementById('siteContent');
+
+  envelopeOverlay.addEventListener('click', openSite);
+  envelopeOverlay.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openSite();
+    }
+  });
+
+  function openSite() {
+    envelopeOverlay.style.opacity = '0';
+    setTimeout(() => {
+      envelopeOverlay.style.display = 'none';
+      siteContent.style.display = 'block';
+      siteContent.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'auto';
+    }, 500);
+  }
+
   // Fotos enviadas antes + novas fotos combinadas
   const allPhotos = [
     "https://i.imgur.com/hdvYGWu.jpeg",
@@ -275,7 +333,7 @@
   }
 
   function updateDetailedCountdown() {
-    const startDate = new Date(2023, 8, 27, 0, 0, 0); // 27/09/2023 00:00:00
+    const startDate = new Date(2023, 8, 27, 0, 0, 0);
     const now = new Date();
 
     const { years, months, days, hours, minutes, seconds } = calculateDetailedTime(startDate, now);

@@ -33,6 +33,7 @@
     text-align: center;
     position: relative;
     z-index: 10;
+    margin: 0 auto;
   }
 
   h1 {
@@ -119,7 +120,7 @@
     border-radius: 12px;
     box-shadow: 0 6px 15px rgba(219, 112, 147, 0.5);
     object-fit: cover;
-    opacity: 0.5; /* alterado para mais visível */
+    opacity: 0.5; /* opacidade ajustada para melhor visibilidade */
     transition: opacity 0.3s ease;
     cursor: pointer;
     user-select: none;
@@ -128,7 +129,7 @@
     will-change: transform, opacity;
   }
   .dynamic-photo:hover {
-    opacity: 0.8; /* correspondendo o hover para mais visível também */
+    opacity: 0.8;
     transform: scale(1.1);
     z-index: 20;
     filter: drop-shadow(0 5px 10px rgba(219, 112, 147, 0.8));
@@ -292,26 +293,53 @@
   updateDetailedCountdown();
   setInterval(updateDetailedCountdown, 1000);
 
-  // Criar fotos dinamicamente com posições e tamanhos variados
-  function createDynamicPhotos() {
+  // Criar fotos dinamicamente posicionadas fora da área branca central (container)
+  function createDynamicPhotosOutsideContainer() {
     const body = document.body;
+    const container = document.querySelector('.container');
+    const containerRect = container.getBoundingClientRect();
+
     allPhotos.forEach((src, index) => {
       const img = document.createElement('img');
       img.src = src;
       img.alt = `Foto decorativa ${index + 1}`;
       img.className = 'dynamic-photo';
-      // Tamanho aleatório entre 80 e 160 pixels
+
+      // tamanho aleatório
       const size = 80 + Math.random() * 80;
       img.style.width = `${size}px`;
       img.style.height = `${size}px`;
-      // Posição aleatória dentro da viewport com margem
-      const padding = 50;
-      const maxX = window.innerWidth - size - padding;
-      const maxY = window.innerHeight - size - padding;
-      img.style.left = `${Math.random() * maxX + padding/2}px`;
-      img.style.top = `${Math.random() * maxY + padding/2}px`;
-      img.style.opacity = 0.5 + Math.random() * 0.3; // opacidade mais visível
-      // Evento para abrir modal
+
+      // Áreas laterais esquerda e direita para colocar fotos,
+      // pois container está centralizado com largura fixa
+      // compute espaços laterais em px
+      const leftSpace = containerRect.left;
+      const rightSpace = window.innerWidth - containerRect.right;
+
+      // Decidir randomicamente se foto ficará na esquerda ou direita
+      const placeLeft = Math.random() < 0.5;
+
+      // Posição horizontal dentro do espaço lateral selecionado
+      let x;
+      if(placeLeft) {
+        // posição aleatória na faixa que fica à esquerda do container,
+        // deixando margem de 10px na esquerda e direita da faixa
+        x = Math.random() * (leftSpace - size - 10) + 10;
+      } else {
+        // faixa direita similar
+        x = containerRect.right + Math.random() * (rightSpace - size - 10) + 10;
+      }
+
+      // Posição vertical aleatória em toda altura da viewport, deixando margem de 10px em cima e embaixo
+      const y = Math.random() * (window.innerHeight - size - 20) + 10;
+
+      img.style.left = `${x}px`;
+      img.style.top = `${y}px`;
+
+      // Uma opacidade levemente variada para suavizar
+      img.style.opacity = 0.5 + Math.random() * 0.3;
+
+      // Eventos para acessibilidade e clique
       img.tabIndex = 0;
       img.addEventListener('click', () => openModal(img.src, img.alt));
       img.addEventListener('keydown', e => {
@@ -320,6 +348,7 @@
           openModal(img.src, img.alt);
         }
       });
+
       body.appendChild(img);
     });
   }
@@ -355,11 +384,16 @@
     }
   });
 
-  window.addEventListener('load', createDynamicPhotos);
+  // Inicializa fotos na página e refaz após redimensionar
+  window.addEventListener('load', () => {
+    createDynamicPhotosOutsideContainer();
+  });
+
   window.addEventListener('resize', () => {
     document.querySelectorAll('.dynamic-photo').forEach(img => img.remove());
-    createDynamicPhotos();
+    createDynamicPhotosOutsideContainer();
   });
 </script>
 </body>
 </html>
+

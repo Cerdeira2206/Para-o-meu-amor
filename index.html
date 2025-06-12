@@ -120,7 +120,7 @@
     border-radius: 12px;
     box-shadow: 0 6px 15px rgba(219, 112, 147, 0.5);
     object-fit: cover;
-    opacity: 0.5; /* opacidade ajustada para melhor visibilidade */
+    opacity: 0.5;
     transition: opacity 0.3s ease;
     cursor: pointer;
     user-select: none;
@@ -191,6 +191,25 @@
     background-color: #a71c45;
     outline: none;
   }
+
+  /* Player de música fixo no canto inferior direito */
+  .audio-player {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 50;
+    background: rgba(255 255 255 / 0.9);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(219, 112, 147, 0.8);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+  }
+  .audio-player audio {
+    outline: none;
+    width: 200px;
+    border-radius: 8px;
+  }
 </style>
 </head>
 <body>
@@ -209,6 +228,11 @@
       Feito com amor para você, minha Thaylla Mariane.
     </footer>
   </main>
+
+  <!-- Player de música -->
+  <div class="audio-player" aria-label="Player de música relaxante de amor">
+    <audio src="https://cdn.pixabay.com/download/audio/2022/03/02/audio_7c1fe48e52.mp3?filename=soft-ambient-11525.mp3" controls autoplay loop preload="auto"></audio>
+  </div>
 
   <!-- Modal para ampliar as fotos -->
   <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Visualização da foto ampliada">
@@ -396,4 +420,3 @@
 </script>
 </body>
 </html>
-

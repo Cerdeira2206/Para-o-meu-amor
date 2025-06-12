@@ -17,7 +17,6 @@
     overflow: hidden;
     background: linear-gradient(135deg, #fce1e4 0%, #f9d5e5 45%, #fbc8d4 100%);
   }
-  /* Overlay carta fechamento antigo */
   #envelopeOverlay {
     position: fixed;
     top: 0;
@@ -143,8 +142,6 @@
     user-select: none;
     z-index: 5;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
-    will-change: transform, opacity, left, top;
-    transition: opacity 0.3s ease;
   }
   .dynamic-photo:hover {
     opacity: 0.8;
@@ -329,7 +326,7 @@ function createDynamicPhotosOutsideContainer() {
   const container = document.querySelector('.container');
   const containerRect = container.getBoundingClientRect();
 
-  allPhotos.forEach((src, index) => {
+  animatedPhotos = allPhotos.map((src, index) => {
     const img = document.createElement('img');
     img.src = src;
     img.alt = `Foto decorativa ${index + 1}`;
@@ -345,7 +342,6 @@ function createDynamicPhotosOutsideContainer() {
     let x = 0;
     if(placeLeft) x = Math.random() * (leftSpace - size - 10) + 10;
     else x = containerRect.right + Math.random() * (rightSpace - size - 10) + 10;
-
     const y = Math.random() * (window.innerHeight - size - 20) + 10;
 
     img.style.left = `${x}px`;
@@ -363,48 +359,76 @@ function createDynamicPhotosOutsideContainer() {
 
     document.body.appendChild(img);
 
-    // Prepare object for animation with velocity
-    animatedPhotos.push({
-      element: img,
-      x,
-      y,
-      size,
-      vx: (Math.random() * 0.3 + 0.05)*(Math.random() < 0.5 ? 1 : -1),
-      vy: (Math.random() * 0.3 + 0.05)*(Math.random() < 0.5 ? 1 : -1)
-    });
+    return { element: img, x, y, size, vx: (Math.random() * 0.3 + 0.05)*(Math.random() < 0.5 ? 1 : -1), vy: (Math.random() * 0.3 + 0.05)*(Math.random() < 0.5 ? 1 : -1) };
   });
 }
 
-let animationFrameId;
+function detectCollision(a, b) {
+  return !(a.x + a.size < b.x || a.x > b.x + b.size || a.y + a.size < b.y || a.y > b.y + b.size);
+}
 
 function animatePhotos() {
   const container = document.querySelector('.container');
   const containerRect = container.getBoundingClientRect();
 
-  animatedPhotos.forEach(photo => {
+  for(let i = 0; i < animatedPhotos.length; i++) {
+    let photo = animatedPhotos[i];
+
     photo.x += photo.vx;
     photo.y += photo.vy;
 
-    // Bounce horizontally in the allowed zones outside container
+    // Colisão com bordas laterais esquerda e direita
     if(photo.x <= 10) photo.vx = Math.abs(photo.vx);
-    if(photo.x + photo.size >= containerRect.left -10 && photo.x < containerRect.left) photo.vx = -Math.abs(photo.vx);
-    if(photo.x >= containerRect.right +10 && photo.x + photo.size <= window.innerWidth -10) photo.vx = -Math.abs(photo.vx);
-    if(photo.x + photo.size >= window.innerWidth -10) photo.vx = -Math.abs(photo.vx);
+    if(photo.x + photo.size >= containerRect.left - 10 && photo.x < containerRect.left) photo.vx = -Math.abs(photo.vx);
+    if(photo.x >= containerRect.right + 10 && photo.x + photo.size <= window.innerWidth - 10) photo.vx = -Math.abs(photo.vx);
+    if(photo.x + photo.size >= window.innerWidth - 10) photo.vx = -Math.abs(photo.vx);
 
-    // Bounce vertically within viewport bounds
+    // Colisão com topo e base da janela
     if(photo.y <= 10) photo.vy = Math.abs(photo.vy);
     if(photo.y + photo.size >= window.innerHeight - 10) photo.vy = -Math.abs(photo.vy);
 
+    // Colisão simples com outras fotos
+    for(let j = i + 1; j < animatedPhotos.length; j++) {
+      let other = animatedPhotos[j];
+      if(detectCollision(photo, other)) {
+        // Inverte as velocidades horizontal e vertical para ambos (simples reflexão)
+        let tempVx = photo.vx;
+        let tempVy = photo.vy;
+        photo.vx = -other.vx;
+        photo.vy = -other.vy;
+        other.vx = -tempVx;
+        other.vy = -tempVy;
+
+        // Ajusta posições para evitar sobreposição extremamente grudada
+        if(photo.x < other.x) {
+          photo.x -= 1;
+          other.x += 1;
+        } else {
+          photo.x += 1;
+          other.x -= 1;
+        }
+        if(photo.y < other.y) {
+          photo.y -= 1;
+          other.y += 1;
+        } else {
+          photo.y += 1;
+          other.y -= 1;
+        }
+      }
+    }
     photo.element.style.left = `${photo.x}px`;
     photo.element.style.top = `${photo.y}px`;
-  });
-
-  animationFrameId = requestAnimationFrame(animatePhotos);
+  }
+  requestAnimationFrame(animatePhotos);
 }
 
+let animationStarted = false;
+
 function startPhotoAnimation() {
+  if(animationStarted) return;
+  animationStarted = true;
   animatedPhotos = [];
-  document.querySelectorAll('.dynamic-photo').forEach(img=>img.remove());
+  document.querySelectorAll('.dynamic-photo').forEach(img => img.remove());
   createDynamicPhotosOutsideContainer();
   animatePhotos();
 }
@@ -419,7 +443,8 @@ function openModal(imgSrc, imgAlt) {
   modal.classList.add('show');
   modalImage.focus();
   document.body.style.overflow = 'hidden';
-  cancelAnimationFrame(animationFrameId);
+  // pausa animação
+  animationStarted = false;
 }
 
 function closeModal() {
@@ -427,6 +452,7 @@ function closeModal() {
   modalImage.src = '';
   modalImage.alt = '';
   document.body.style.overflow = '';
+  // retoma animação
   startPhotoAnimation();
 }
 
@@ -440,4 +466,3 @@ document.addEventListener('keydown', e => {
 </script>
 </body>
 </html>
-

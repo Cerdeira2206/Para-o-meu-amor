@@ -19,9 +19,8 @@
     background: linear-gradient(135deg, #fce1e4 0%, #f9d5e5 45%, #fbc8d4 100%);
     color: #4a1a2a;
     min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    overflow-x: hidden;
+    position: relative;
     padding: 32px 16px;
   }
 
@@ -32,6 +31,8 @@
     box-shadow: 0 12px 30px rgba(255, 105, 180, 0.25);
     padding: 40px 32px;
     text-align: center;
+    position: relative;
+    z-index: 10;
   }
 
   h1 {
@@ -70,36 +71,12 @@
     white-space: pre-line;
   }
 
-  /* Galeria de fotos */
-  .photo-gallery {
-    margin-top: 48px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 20px;
-    justify-items: center;
-  }
-
-  .photo-gallery img {
-    width: 140px;
-    height: 140px;
-    object-fit: cover;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(219, 112, 147, 0.4);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: pointer;
-  }
-
-  .photo-gallery img:hover,
-  .photo-gallery img:focus {
-    transform: scale(1.05);
-    box-shadow: 0 10px 25px rgba(219, 112, 147, 0.7);
-    outline: none;
-  }
-
   footer {
     margin-top: 48px;
     font-size: 0.875rem;
     color: #a86f8c;
+    position: relative;
+    z-index: 10;
   }
 
   /* Coração animado */
@@ -134,21 +111,34 @@
     p.message {
       font-size: 1rem;
     }
-    .photo-gallery {
-      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      gap: 16px;
-    }
-    .photo-gallery img {
-      width: 100px;
-      height: 100px;
-    }
+  }
+
+  /* Fotos dinâmicas espalhadas */
+  .dynamic-photo {
+    position: fixed;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(219, 112, 147, 0.5);
+    object-fit: cover;
+    opacity: 0.25;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+    user-select: none;
+    z-index: 5;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+    will-change: transform, opacity;
+  }
+  .dynamic-photo:hover {
+    opacity: 0.6;
+    transform: scale(1.1);
+    z-index: 20;
+    filter: drop-shadow(0 5px 10px rgba(219, 112, 147, 0.8));
   }
 
   /* Modal para visualização maior das fotos */
   .modal {
     display: none;
     position: fixed;
-    z-index: 2000;
+    z-index: 3000;
     left: 0;
     top: 0;
     width: 100vw;
@@ -214,13 +204,6 @@
       Carregando...
     </div>
 
-    <section class="photo-gallery" aria-label="Galeria de fotos do casal">
-      <img src="https://i.imgur.com/1ViRU_vNv3SJUPNWpd8jQwGpKnj0v_ron.jpeg" alt="Foto romântica do casal Thaylla Mariane e parceiro juntos sorrindo em parque ensolarado" tabindex="0" />
-      <img src="https://i.imgur.com/ae66oWG.jpeg" alt="Foto do casal Thaylla Mariane abraçados sob luz suave com sorriso feliz" tabindex="0" />
-      <img src="https://i.imgur.com/MYPe0vj.jpeg" alt="Foto artística do casal segurando mãos lado a lado em fundo desfocado" tabindex="0" />
-      <img src="https://i.imgur.com/qDpICTY.jpeg" alt="Foto descontraída do casal Thaylla Mariane e parceiro curtindo café juntos" tabindex="0" />
-    </section>
-
     <footer>
       Feito com amor para você, minha Thaylla Mariane.
     </footer>
@@ -234,117 +217,159 @@
     </div>
   </div>
 
-  <script>
-    // Calcula a diferença detalhada ano, mês, dia, hora, minuto, segundo entre startDate e agora
-    function calculateDetailedTime(startDate, now) {
-      let years = now.getFullYear() - startDate.getFullYear();
-      let months = now.getMonth() - startDate.getMonth();
-      let days = now.getDate() - startDate.getDate();
-      let hours = now.getHours() - startDate.getHours();
-      let minutes = now.getMinutes() - startDate.getMinutes();
-      let seconds = now.getSeconds() - startDate.getSeconds();
+<script>
+  // Fotos enviadas antes + novas fotos combinadas
+  const allPhotos = [
+    "https://i.imgur.com/hdvYGWu.jpeg",
+    "https://i.imgur.com/BjKR2sl.jpeg",
+    "https://i.imgur.com/3yhPhMg.jpeg",
+    "https://i.imgur.com/U1IJPye.jpeg",
+    "https://i.imgur.com/RGl3Vjp.jpeg",
+    "https://i.imgur.com/DihovPQ.jpeg",
+    "https://i.imgur.com/jhgPEE5.jpeg",
+    "https://i.imgur.com/CiF1e87.jpeg",
+    "https://i.imgur.com/6ExQF2I.jpeg",
+    "https://i.imgur.com/cVkPQEq.jpeg",
+    "https://i.imgur.com/AIomgPP.jpeg"
+  ];
 
-      if(seconds < 0) {
-        seconds += 60;
-        minutes--;
-      }
-      if(minutes < 0) {
-        minutes += 60;
-        hours--;
-      }
-      if(hours < 0) {
-        hours += 24;
-        days--;
-      }
-      if(days < 0) {
-        // Ajustar para mês anterior
-        let prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-        days += prevMonth.getDate();
-        months--;
-      }
-      if(months < 0) {
-        months += 12;
-        years--;
-      }
+  // Calcula a diferença detalhada ano, mês, dia, hora, minuto, segundo entre startDate e agora
+  function calculateDetailedTime(startDate, now) {
+    let years = now.getFullYear() - startDate.getFullYear();
+    let months = now.getMonth() - startDate.getMonth();
+    let days = now.getDate() - startDate.getDate();
+    let hours = now.getHours() - startDate.getHours();
+    let minutes = now.getMinutes() - startDate.getMinutes();
+    let seconds = now.getSeconds() - startDate.getSeconds();
 
-      return { years, months, days, hours, minutes, seconds };
+    if(seconds < 0) {
+      seconds += 60;
+      minutes--;
+    }
+    if(minutes < 0) {
+      minutes += 60;
+      hours--;
+    }
+    if(hours < 0) {
+      hours += 24;
+      days--;
+    }
+    if(days < 0) {
+      let prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+      days += prevMonth.getDate();
+      months--;
+    }
+    if(months < 0) {
+      months += 12;
+      years--;
     }
 
-    function formatPlural(value, singular, plural) {
-      return `${value} ${value === 1 ? singular : plural}`;
-    }
+    return { years, months, days, hours, minutes, seconds };
+  }
 
-    function updateDetailedCountdown() {
-      const startDate = new Date(2023, 8, 27, 0, 0, 0); // 27/09/2023 00:00:00
-      const now = new Date();
+  function formatPlural(value, singular, plural) {
+    return `${value} ${value === 1 ? singular : plural}`;
+  }
 
-      const { years, months, days, hours, minutes, seconds } = calculateDetailedTime(startDate, now);
-      const element = document.getElementById('timeTogether');
+  function updateDetailedCountdown() {
+    const startDate = new Date(2023, 8, 27, 0, 0, 0);
+    const now = new Date();
 
-      let parts = [];
-      if(years > 0) parts.push(formatPlural(years, 'ano', 'anos'));
-      if(months > 0 || years > 0) parts.push(formatPlural(months, 'mês', 'meses'));
-      parts.push(formatPlural(days, 'dia', 'dias'));
-      parts.push(formatPlural(hours, 'hora', 'horas'));
-      parts.push(formatPlural(minutes, 'minuto', 'minutos'));
-      parts.push(formatPlural(seconds, 'segundo', 'segundos'));
+    const { years, months, days, hours, minutes, seconds } = calculateDetailedTime(startDate, now);
+    const element = document.getElementById('timeTogether');
 
-      element.textContent = parts.join(', ');
-    }
+    let parts = [];
+    if(years > 0) parts.push(formatPlural(years, 'ano', 'anos'));
+    if(months > 0 || years > 0) parts.push(formatPlural(months, 'mês', 'meses'));
+    parts.push(formatPlural(days, 'dia', 'dias'));
+    parts.push(formatPlural(hours, 'hora', 'horas'));
+    parts.push(formatPlural(minutes, 'minuto', 'minutos'));
+    parts.push(formatPlural(seconds, 'segundo', 'segundos'));
 
-    updateDetailedCountdown();
-    setInterval(updateDetailedCountdown, 1000);
+    element.textContent = parts.join(', ');
+  }
 
-    // Modal de visualização das fotos
-    const modal = document.getElementById('modal');
-    const modalImage = document.getElementById('modalImage');
-    const modalCloseBtn = modal.querySelector('.modal-close');
+  updateDetailedCountdown();
+  setInterval(updateDetailedCountdown, 1000);
 
-    function openModal(imgSrc, imgAlt) {
-      modalImage.src = imgSrc;
-      modalImage.alt = imgAlt;
-      modal.classList.add('show');
-      modalImage.focus();
-      document.body.style.overflow = 'hidden'; // Impede scroll do fundo
-    }
-
-    function closeModal() {
-      modal.classList.remove('show');
-      modalImage.src = '';
-      modalImage.alt = '';
-      document.body.style.overflow = '';
-    }
-
-    // Abrir modal ao clicar em qualquer imagem da galeria
-    document.querySelectorAll('.photo-gallery img').forEach(img => {
-      img.addEventListener('click', () => {
-        openModal(img.src, img.alt);
-      });
+  // Criar fotos dinamicamente com posições e tamanhos variados
+  function createDynamicPhotos() {
+    const body = document.body;
+    const colors = ['#D81E5B', '#A71C45', '#F9A8D4']; // para sombras, opção
+    allPhotos.forEach((src, index) => {
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = `Foto decorativa ${index + 1}`;
+      img.className = 'dynamic-photo';
+      // Definir tamanho aleatório entre 80 e 160 pixels
+      const size = 80 + Math.random() * 80;
+      img.style.width = `${size}px`;
+      img.style.height = `${size}px`;
+      // Definir posição aleatória dentro da viewport, com margem para evitar cortes
+      const padding = 50;
+      const maxX = window.innerWidth - size - padding;
+      const maxY = window.innerHeight - size - padding;
+      img.style.left = `${Math.random() * maxX + padding/2}px`;
+      img.style.top = `${Math.random() * maxY + padding/2}px`;
+      // Definir opacidade suavizada por distância (opcional)
+      img.style.opacity = 0.25 + Math.random() * 0.3;
+      // Adicionar evento para abrir modal ao clicar
+      img.tabIndex = 0;
+      img.addEventListener('click', () => openModal(img.src, img.alt));
       img.addEventListener('keydown', e => {
         if(e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           openModal(img.src, img.alt);
         }
       });
+      body.appendChild(img);
     });
+  }
 
-    // Fechar modal ao clicar no botão de fechar
-    modalCloseBtn.addEventListener('click', closeModal);
+  // Modal para visualização das fotos ampliadas
+  const modal = document.getElementById('modal');
+  const modalImage = document.getElementById('modalImage');
+  const modalCloseBtn = modal.querySelector('.modal-close');
 
-    // Fechar modal ao clicar fora da imagem no modal
-    modal.addEventListener('click', e => {
-      if(e.target === modal) {
-        closeModal();
-      }
-    });
+  function openModal(imgSrc, imgAlt) {
+    modalImage.src = imgSrc;
+    modalImage.alt = imgAlt;
+    modal.classList.add('show');
+    modalImage.focus();
+    document.body.style.overflow = 'hidden';
+  }
 
-    // Fechar modal ao pressionar tecla Escape
-    document.addEventListener('keydown', e => {
-      if(e.key === 'Escape' && modal.classList.contains('show')) {
-        closeModal();
-      }
-    });
-  </script>
+  function closeModal() {
+    modal.classList.remove('show');
+    modalImage.src = '';
+    modalImage.alt = '';
+    document.body.style.overflow = '';
+  }
+
+  modalCloseBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', e => {
+    if(e.target === modal) {
+      closeModal();
+    }
+  });
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape' && modal.classList.contains('show')) {
+      closeModal();
+    }
+  });
+
+  // Inicializa fotos dinâmicas na página
+  window.addEventListener('load', () => {
+    createDynamicPhotos();
+  });
+
+  // Também refaz posicionamento se janela for redimensionada
+  window.addEventListener('resize', () => {
+    // Remove fotos antigas
+    document.querySelectorAll('.dynamic-photo').forEach(img => img.remove());
+    createDynamicPhotos();
+  });
+</script>
 </body>
 </html>
 

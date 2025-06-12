@@ -123,27 +123,14 @@
     margin-bottom: 24px;
   }
   @keyframes beat {
-    0%, 100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.2);
-    }
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.2); }
   }
   @media(max-width:480px){
-    h1.content-title {
-      font-size: 2.4rem;
-    }
-    .countdown {
-      font-size: 1.4rem;
-      padding: 16px 0;
-    }
-    .container {
-      padding: 24px 16px;
-    }
-    p.message {
-      font-size: 1rem;
-    }
+    h1.content-title { font-size: 2.4rem; }
+    .countdown { font-size: 1.4rem; padding: 16px 0; }
+    .container { padding: 24px 16px; }
+    p.message { font-size: 1rem; }
   }
   .dynamic-photo {
     position: fixed;
@@ -155,7 +142,7 @@
     user-select: none;
     z-index: 5;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
-    will-change: left, top, transform;
+    will-change: transform, left, top;
     transition: opacity 0.3s ease;
   }
   .dynamic-photo:hover {
@@ -244,293 +231,293 @@
 </div>
 
 <script>
-  const envelopeOverlay = document.getElementById('envelopeOverlay');
-  const siteContent = document.getElementById('siteContent');
+const envelopeOverlay = document.getElementById('envelopeOverlay');
+const siteContent = document.getElementById('siteContent');
 
-  envelopeOverlay.addEventListener('click', openEnvelope);
-  envelopeOverlay.addEventListener('keydown', e => {
-    if(e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      openEnvelope();
+envelopeOverlay.addEventListener('click', openEnvelope);
+envelopeOverlay.addEventListener('keydown', e => {
+  if(e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    openEnvelope();
+  }
+});
+
+function openEnvelope() {
+  envelopeOverlay.style.animation = 'openEnvelopeAnim 1.2s forwards';
+  envelopeOverlay.style.pointerEvents = 'none';
+  setTimeout(() => {
+    envelopeOverlay.style.display = 'none';
+    siteContent.style.display = 'block';
+    siteContent.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'auto';
+    startPhotoAnimation();
+  }, 1200);
+}
+
+const style = document.createElement('style');
+style.textContent = `
+@keyframes openEnvelopeAnim {
+  0% { transform: scale(1) rotateY(0deg); opacity: 1; }
+  100% { transform: scale(1.6) rotateY(180deg); opacity: 0; }
+}`;
+document.head.appendChild(style);
+
+const allPhotos = [
+  "https://i.imgur.com/hdvYGWu.jpeg",
+  "https://i.imgur.com/BjKR2sl.jpeg",
+  "https://i.imgur.com/3yhPhMg.jpeg",
+  "https://i.imgur.com/U1IJPye.jpeg",
+  "https://i.imgur.com/RGl3Vjp.jpeg",
+  "https://i.imgur.com/DihovPQ.jpeg",
+  "https://i.imgur.com/jhgPEE5.jpeg",
+  "https://i.imgur.com/CiF1e87.jpeg",
+  "https://i.imgur.com/6ExQF2I.jpeg",
+  "https://i.imgur.com/cVkPQEq.jpeg",
+  "https://i.imgur.com/AIomgPP.jpeg",
+  "https://i.imgur.com/ae66oWG.jpeg"
+];
+
+function calculateDetailedTime(startDate, now){
+  let years=now.getFullYear()-startDate.getFullYear();
+  let months=now.getMonth()-startDate.getMonth();
+  let days=now.getDate()-startDate.getDate();
+  let hours=now.getHours()-startDate.getHours();
+  let minutes=now.getMinutes()-startDate.getMinutes();
+  let seconds=now.getSeconds()-startDate.getSeconds();
+
+  if(seconds<0){seconds+=60;minutes--;}
+  if(minutes<0){minutes+=60;hours--;}
+  if(hours<0){hours+=24;days--;}
+  if(days<0){
+    let prevMonth=new Date(now.getFullYear(),now.getMonth(),0);
+    days+=prevMonth.getDate();
+    months--;
+  }
+  if(months<0){months+=12;years--;}
+
+  return {years,months,days,hours,minutes,seconds};
+}
+
+function formatPlural(value,singular,plural){
+  return `${value} ${value === 1 ? singular : plural}`;
+}
+
+function updateDetailedCountdown(){
+  const startDate=new Date(2023,8,27);
+  const now=new Date();
+
+  const {years,months,days,hours,minutes,seconds}=calculateDetailedTime(startDate,now);
+  const element=document.getElementById('timeTogether');
+
+  let parts=[];
+  if(years>0) parts.push(formatPlural(years,'ano','anos'));
+  if(months>0||years>0) parts.push(formatPlural(months,'mês','meses'));
+  parts.push(formatPlural(days,'dia','dias'));
+  parts.push(formatPlural(hours,'hora','horas'));
+  parts.push(formatPlural(minutes,'minuto','minutos'));
+  parts.push(formatPlural(seconds,'segundo','segundos'));
+
+  element.textContent = parts.join(', ');
+}
+
+updateDetailedCountdown();
+setInterval(updateDetailedCountdown,1000);
+
+let animatedPhotos = [];
+
+function createDynamicPhotos() {
+  animatedPhotos=[];
+
+  allPhotos.forEach((src,index)=>{
+    const img=document.createElement('img');
+    img.src=src;
+    img.alt=`Foto decorativa ${index+1}`;
+    img.className='dynamic-photo';
+
+    const size=80+Math.random()*80;
+    img.style.width = `${size}px`;
+    img.style.height = `${size}px`;
+
+    // posição aleatória pela tela toda, respeitando o tamanho, margem 10px
+    const x = Math.random()*(window.innerWidth-size-20)+10;
+    const y = Math.random()*(window.innerHeight-size-20)+10;
+
+    img.style.left = `${x}px`;
+    img.style.top = `${y}px`;
+    img.style.opacity = 0.5 + Math.random()*0.3;
+
+    img.tabIndex=0;
+    img.addEventListener('click',()=>openModal(img.src,img.alt));
+    img.addEventListener('keydown',e=>{
+      if(e.key==='Enter'||e.key===' '){
+        e.preventDefault();
+        openModal(img.src,img.alt);
+      }
+    });
+
+    document.body.appendChild(img);
+
+    animatedPhotos.push({
+      element: img,
+      x,
+      y,
+      size,
+      vx: (Math.random()*0.3+0.05)*(Math.random()<0.5 ? 1:-1),
+      vy: (Math.random()*0.3+0.05)*(Math.random()<0.5 ? 1:-1),
+      mass: size
+    });
+  });
+}
+
+function detectCollisionCircles(a,b){
+  const dx=(a.x+a.size/2)-(b.x+b.size/2);
+  const dy=(a.y+a.size/2)-(b.y+b.size/2);
+  const distance=Math.sqrt(dx*dx+dy*dy);
+  const minDist=(a.size+b.size)/2;
+  return distance<minDist;
+}
+
+function resolveCollision(a,b){
+  const dx=(a.x+a.size/2)-(b.x+b.size/2);
+  const dy=(a.y+a.size/2)-(b.y+b.size/2);
+  const distance = Math.sqrt(dx*dx+dy*dy) || 0.01; // evitar div 0
+
+  // Normal
+  const nx = dx / distance;
+  const ny = dy / distance;
+
+  // Relative velocity
+  const vxRel = a.vx - b.vx;
+  const vyRel = a.vy - b.vy;
+
+  // Speed along normal
+  const speed = vxRel * nx + vyRel * ny;
+  if (speed > 0) return; // afastando-se, não resolve
+
+  // Coeficiente restituição = 1 (elástica)
+  const e = 1;
+
+  // Impulso scalar
+  const impulse = (-(1 + e) * speed) / (1 / a.mass + 1 / b.mass);
+
+  // Aplica velocidades
+  const impulseX = impulse * nx;
+  const impulseY = impulse * ny;
+
+  a.vx += impulseX / a.mass;
+  a.vy += impulseY / a.mass;
+  b.vx -= impulseX / b.mass;
+  b.vy -= impulseY / b.mass;
+}
+
+function animatePhotos() {
+  for(let i = 0; i < animatedPhotos.length; i++) {
+    let photo = animatedPhotos[i];
+
+    photo.x += photo.vx;
+    photo.y += photo.vy;
+
+    // Colisão com as bordas da viewport
+    if(photo.x <= 10) {
+      photo.x = 10;
+      photo.vx = Math.abs(photo.vx);
     }
+    if(photo.x + photo.size >= window.innerWidth - 10) {
+      photo.x = window.innerWidth - 10 - photo.size;
+      photo.vx = -Math.abs(photo.vx);
+    }
+    if(photo.y <= 10) {
+      photo.y = 10;
+      photo.vy = Math.abs(photo.vy);
+    }
+    if(photo.y + photo.size >= window.innerHeight - 10) {
+      photo.y = window.innerHeight - 10 - photo.size;
+      photo.vy = -Math.abs(photo.vy);
+    }
+  }
+
+  // Colisão entre fotos, ajustando velocidades sem teletransporte
+  for(let i = 0; i < animatedPhotos.length; i++) {
+    for(let j = i + 1; j < animatedPhotos.length; j++) {
+      let a = animatedPhotos[i];
+      let b = animatedPhotos[j];
+      if(detectCollisionCircles(a, b)) {
+        resolveCollision(a,b);
+        // Ajustar posições mínimas para evitar sobreposição forte:
+        const dx = (a.x + a.size/2) - (b.x + b.size/2);
+        const dy = (a.y + a.size/2) - (b.y + b.size/2);
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        const overlap = ((a.size + b.size)/2) - dist;
+        if(overlap > 0){
+          const pushX = (dx/dist)*(overlap/2);
+          const pushY = (dy/dist)*(overlap/2);
+          a.x += pushX;
+          a.y += pushY;
+          b.x -= pushX;
+          b.y -= pushY;
+        }
+      }
+    }
+  }
+
+  animatedPhotos.forEach(photo => {
+    photo.element.style.left = photo.x + "px";
+    photo.element.style.top = photo.y + "px";
   });
 
-  function openEnvelope() {
-    envelopeOverlay.style.animation = 'openEnvelopeAnim 1.2s forwards';
-    envelopeOverlay.style.pointerEvents = 'none';
-    setTimeout(() => {
-      envelopeOverlay.style.display = 'none';
-      siteContent.style.display = 'block';
-      siteContent.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'auto';
-      startPhotoAnimation();
-    }, 1200);
-  }
+  requestAnimationFrame(animatePhotos);
+}
 
-  const style = document.createElement('style');
-  style.textContent = `
-  @keyframes openEnvelopeAnim {
-    0% { transform: scale(1) rotateY(0deg); opacity: 1; }
-    100% { transform: scale(1.6) rotateY(180deg); opacity: 0; }
-  }`;
-  document.head.appendChild(style);
+let animationStarted = false;
 
-  const allPhotos = [
-    "https://i.imgur.com/hdvYGWu.jpeg",
-    "https://i.imgur.com/BjKR2sl.jpeg",
-    "https://i.imgur.com/3yhPhMg.jpeg",
-    "https://i.imgur.com/U1IJPye.jpeg",
-    "https://i.imgur.com/RGl3Vjp.jpeg",
-    "https://i.imgur.com/DihovPQ.jpeg",
-    "https://i.imgur.com/jhgPEE5.jpeg",
-    "https://i.imgur.com/CiF1e87.jpeg",
-    "https://i.imgur.com/6ExQF2I.jpeg",
-    "https://i.imgur.com/cVkPQEq.jpeg",
-    "https://i.imgur.com/AIomgPP.jpeg"
-  ];
+function startPhotoAnimation() {
+  if(animationStarted) return;
+  animationStarted = true;
+  animatedPhotos = [];
+  document.querySelectorAll(".dynamic-photo").forEach(img => img.remove());
+  createDynamicPhotos();
+  animatePhotos();
+}
 
-  function calculateDetailedTime(startDate, now){
-    let years=now.getFullYear()-startDate.getFullYear();
-    let months=now.getMonth()-startDate.getMonth();
-    let days=now.getDate()-startDate.getDate();
-    let hours=now.getHours()-startDate.getHours();
-    let minutes=now.getMinutes()-startDate.getMinutes();
-    let seconds=now.getSeconds()-startDate.getSeconds();
+const modal = document.getElementById("modal");
+const modalImage = document.getElementById("modalImage");
+const modalCloseBtn = modal.querySelector(".modal-close");
 
-    if(seconds<0){seconds+=60;minutes--;}
-    if(minutes<0){minutes+=60;hours--;}
-    if(hours<0){hours+=24;days--;}
-    if(days<0){
-      let prevMonth=new Date(now.getFullYear(),now.getMonth(),0);
-      days+=prevMonth.getDate();
-      months--;
-    }
-    if(months<0){months+=12;years--;};
+function openModal(imgSrc, imgAlt){
+  modalImage.src = imgSrc;
+  modalImage.alt = imgAlt;
+  modal.classList.add("show");
+  modalImage.focus();
+  document.body.style.overflow = "hidden";
+  animationStarted = false; // parar animação durante modal aberto
+}
 
-    return {years,months,days,hours,minutes,seconds};
-  }
+function closeModal(){
+  modal.classList.remove("show");
+  modalImage.src = "";
+  modalImage.alt = "";
+  document.body.style.overflow = "";
+  startPhotoAnimation(); // reiniciar animação depois de fechar modal
+}
 
-  function formatPlural(value,singular,plural){
-    return `${value} ${value === 1 ? singular : plural}`;
-  }
+modalCloseBtn.addEventListener("click", closeModal);
+modal.addEventListener("click", e => {
+  if(e.target === modal) closeModal();
+});
+document.addEventListener("keydown", e => {
+  if(e.key === "Escape" && modal.classList.contains("show")) closeModal();
+});
 
-  function updateDetailedCountdown(){
-    const startDate=new Date(2023,8,27);
-    const now=new Date();
-
-    const {years,months,days,hours,minutes,seconds}=calculateDetailedTime(startDate,now);
-    const element=document.getElementById('timeTogether');
-
-    let parts=[];
-    if(years>0) parts.push(formatPlural(years,'ano','anos'));
-    if(months>0||years>0) parts.push(formatPlural(months,'mês','meses'));
-    parts.push(formatPlural(days,'dia','dias'));
-    parts.push(formatPlural(hours,'hora','horas'));
-    parts.push(formatPlural(minutes,'minuto','minutos'));
-    parts.push(formatPlural(seconds,'segundo','segundos'));
-
-    element.textContent = parts.join(', ');
-  }
-
-  updateDetailedCountdown();
-  setInterval(updateDetailedCountdown,1000);
-
-  let animatedPhotos = [];
-
-  function createDynamicPhotos() {
-    animatedPhotos=[];
-
-    allPhotos.forEach((src,index)=>{
-      const img=document.createElement('img');
-      img.src=src;
-      img.alt=`Foto decorativa ${index+1}`;
-      img.className='dynamic-photo';
-
-      const size=80+Math.random()*80;
-      img.style.width = `${size}px`;
-      img.style.height = `${size}px`;
-
-      // posição aleatória pela tela toda, respeitando o tamanho, margem 10px
-      const x = Math.random()*(window.innerWidth - size - 20) + 10;
-      const y = Math.random()*(window.innerHeight - size - 20) + 10;
-
-      img.style.left = `${x}px`;
-      img.style.top = `${y}px`;
-      img.style.opacity = 0.5 + Math.random()*0.3;
-
-      img.tabIndex=0;
-      img.addEventListener('click',()=>openModal(img.src,img.alt));
-      img.addEventListener('keydown',e=>{
-        if(e.key==='Enter'||e.key===' '){
-          e.preventDefault();
-          openModal(img.src,img.alt);
-        }
-      });
-
-      document.body.appendChild(img);
-
-      animatedPhotos.push({
-        element: img,
-        x,
-        y,
-        size,
-        vx: (Math.random()*0.4+0.05)*(Math.random()<0.5 ? 1:-1),
-        vy: (Math.random()*0.4+0.05)*(Math.random()<0.5 ? 1:-1),
-        mass: size
-      });
-    });
-  }
-
-  function detectCollisionCircles(a,b){
-    const dx=(a.x + a.size/2)-(b.x + b.size/2);
-    const dy=(a.y + a.size/2)-(b.y + b.size/2);
-    const distance=Math.sqrt(dx*dx + dy*dy);
-    const minDist=(a.size + b.size)/2;
-    return distance < minDist;
-  }
-
-  function resolveCollision(a,b){
-    const dx=(a.x + a.size/2) - (b.x + b.size/2);
-    const dy=(a.y + a.size/2) - (b.y + b.size/2);
-    const distance = Math.sqrt(dx*dx + dy*dy) || 0.01; // evitar div 0
-
-    // Normal
-    const nx = dx / distance;
-    const ny = dy / distance;
-
-    // Relative velocity
-    const vxRel = a.vx - b.vx;
-    const vyRel = a.vy - b.vy;
-
-    // Speed along normal
-    const speed = vxRel * nx + vyRel * ny;
-    if (speed > 0) return; // afastando
-
-    // Coeficiente restituição = 1 (elástica)
-    const e = 1;
-
-    // Impulso
-    const impulse = (-(1 + e) * speed) / (1 / a.mass + 1 / b.mass);
-
-    const impulseX = impulse * nx;
-    const impulseY = impulse * ny;
-
-    a.vx += impulseX / a.mass;
-    a.vy += impulseY / a.mass;
-    b.vx -= impulseX / b.mass;
-    b.vy -= impulseY / b.mass;
-  }
-
-  function animatePhotos() {
-    for(let i = 0; i < animatedPhotos.length; i++) {
-      const photo = animatedPhotos[i];
-
-      photo.x += photo.vx;
-      photo.y += photo.vy;
-
-      // Colisão com as bordas da viewport
-      if(photo.x <= 10) {
-        photo.x = 10;
-        photo.vx = Math.abs(photo.vx);
-      }
-      if(photo.x + photo.size >= window.innerWidth - 10) {
-        photo.x = window.innerWidth - 10 - photo.size;
-        photo.vx = -Math.abs(photo.vx);
-      }
-      if(photo.y <= 10) {
-        photo.y = 10;
-        photo.vy = Math.abs(photo.vy);
-      }
-      if(photo.y + photo.size >= window.innerHeight - 10) {
-        photo.y = window.innerHeight - 10 - photo.size;
-        photo.vy = -Math.abs(photo.vy);
-      }
-    }
-
-    // Colisões entre fotos
-    for(let i = 0; i < animatedPhotos.length; i++) {
-      for(let j = i+1; j < animatedPhotos.length; j++) {
-        const a = animatedPhotos[i];
-        const b = animatedPhotos[j];
-        if(detectCollisionCircles(a,b)) {
-          resolveCollision(a,b);
-
-          // Corrigir sobreposição suave
-          const dx = (a.x + a.size/2) - (b.x + b.size/2);
-          const dy = (a.y + a.size/2) - (b.y + b.size/2);
-          const dist = Math.sqrt(dx*dx + dy*dy);
-          const overlap = ((a.size + b.size)/2) - dist;
-          if(overlap > 0) {
-            const pushX = (dx / dist) * (overlap / 2);
-            const pushY = (dy / dist) * (overlap / 2);
-            a.x += pushX;
-            a.y += pushY;
-            b.x -= pushX;
-            b.y -= pushY;
-          }
-        }
-      }
-    }
-
-    animatedPhotos.forEach(photo => {
-      photo.element.style.left = `${photo.x}px`;
-      photo.element.style.top = `${photo.y}px`;
-    });
-
-    requestAnimationFrame(animatePhotos);
-  }
-
-  let animationStarted = false;
-  function startPhotoAnimation() {
-    if(animationStarted) return;
-    animationStarted = true;
-    animatedPhotos = [];
-    document.querySelectorAll('.dynamic-photo').forEach(img => img.remove());
-    createDynamicPhotos();
-    animatePhotos();
-  }
-
-  const modal = document.getElementById('modal');
-  const modalImage = document.getElementById('modalImage');
-  const modalCloseBtn = modal.querySelector('.modal-close');
-
-  function openModal(imgSrc, imgAlt) {
-    modalImage.src = imgSrc;
-    modalImage.alt = imgAlt;
-    modal.classList.add('show');
-    modalImage.focus();
-    document.body.style.overflow = 'hidden';
-    animationStarted = false; // Para animação enquanto modal aberto
-  }
-
-  function closeModal() {
-    modal.classList.remove('show');
-    modalImage.src = '';
-    modalImage.alt = '';
-    document.body.style.overflow = '';
+window.addEventListener("load", () => {
+  // Fotos só aparecem depois de abrir a carta
+});
+window.addEventListener("resize", () => {
+  if(animationStarted){
+    document.querySelectorAll(".dynamic-photo").forEach(img => img.remove());
+    animationStarted = false;
     startPhotoAnimation();
   }
-
-  modalCloseBtn.addEventListener('click', closeModal);
-  modal.addEventListener('click', e => {
-    if (e.target === modal) closeModal();
-  });
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && modal.classList.contains('show')) closeModal();
-  });
-
-  window.addEventListener('load', () => {
-    // Nada aqui para fotos; só cria após abrir envelope
-  });
-
-  window.addEventListener('resize', () => {
-    if(animationStarted) {
-      document.querySelectorAll('.dynamic-photo').forEach(img => img.remove());
-      animationStarted = false;
-      startPhotoAnimation();
-    }
-  });
-
+});
 </script>
 </body>
 </html>

@@ -191,25 +191,6 @@
     background-color: #a71c45;
     outline: none;
   }
-
-  /* Player de música fixo no canto inferior direito */
-  .audio-player {
-    position: fixed;
-    bottom: 16px;
-    right: 16px;
-    z-index: 50;
-    background: rgba(255 255 255 / 0.9);
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(219, 112, 147, 0.8);
-    padding: 8px 12px;
-    display: flex;
-    align-items: center;
-  }
-  .audio-player audio {
-    outline: none;
-    width: 200px;
-    border-radius: 8px;
-  }
 </style>
 </head>
 <body>
@@ -229,10 +210,8 @@
     </footer>
   </main>
 
-  <!-- Player de música -->
-  <div class="audio-player" aria-label="Player de música relaxante de amor">
-    <audio src="https://cdn.pixabay.com/download/audio/2022/03/02/audio_7c1fe48e52.mp3?filename=soft-ambient-11525.mp3" controls autoplay loop preload="auto"></audio>
-  </div>
+  <!-- Áudio invisível para música de fundo -->
+  <audio id="background-music" src="https://cdn.pixabay.com/download/audio/2022/03/02/audio_7c1fe48e52.mp3?filename=soft-ambient-11525.mp3" autoplay loop preload="auto" aria-label="Música relaxante de amor de fundo" ></audio>
 
   <!-- Modal para ampliar as fotos -->
   <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Visualização da foto ampliada">
@@ -258,7 +237,6 @@
     "https://i.imgur.com/AIomgPP.jpeg"
   ];
 
-  // Calcula a diferença detalhada ano, mês, dia, hora, minuto, segundo entre startDate e agora
   function calculateDetailedTime(startDate, now) {
     let years = now.getFullYear() - startDate.getFullYear();
     let months = now.getMonth() - startDate.getMonth();
@@ -297,7 +275,7 @@
   }
 
   function updateDetailedCountdown() {
-    const startDate = new Date(2023, 8, 27, 0, 0, 0);
+    const startDate = new Date(2023, 8, 27, 0, 0, 0); // 27/09/2023 00:00:00
     const now = new Date();
 
     const { years, months, days, hours, minutes, seconds } = calculateDetailedTime(startDate, now);
@@ -336,34 +314,26 @@
 
       // Áreas laterais esquerda e direita para colocar fotos,
       // pois container está centralizado com largura fixa
-      // compute espaços laterais em px
       const leftSpace = containerRect.left;
       const rightSpace = window.innerWidth - containerRect.right;
 
-      // Decidir randomicamente se foto ficará na esquerda ou direita
       const placeLeft = Math.random() < 0.5;
 
-      // Posição horizontal dentro do espaço lateral selecionado
       let x;
       if(placeLeft) {
-        // posição aleatória na faixa que fica à esquerda do container,
-        // deixando margem de 10px na esquerda e direita da faixa
         x = Math.random() * (leftSpace - size - 10) + 10;
       } else {
-        // faixa direita similar
         x = containerRect.right + Math.random() * (rightSpace - size - 10) + 10;
       }
 
-      // Posição vertical aleatória em toda altura da viewport, deixando margem de 10px em cima e embaixo
+      // Altura random com margem de 10px
       const y = Math.random() * (window.innerHeight - size - 20) + 10;
 
       img.style.left = `${x}px`;
       img.style.top = `${y}px`;
 
-      // Uma opacidade levemente variada para suavizar
       img.style.opacity = 0.5 + Math.random() * 0.3;
 
-      // Eventos para acessibilidade e clique
       img.tabIndex = 0;
       img.addEventListener('click', () => openModal(img.src, img.alt));
       img.addEventListener('keydown', e => {
@@ -408,7 +378,6 @@
     }
   });
 
-  // Inicializa fotos na página e refaz após redimensionar
   window.addEventListener('load', () => {
     createDynamicPhotosOutsideContainer();
   });

@@ -1,9 +1,12 @@
+`site-dia-dos-namorados.html`
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Para Thaylla Mariane - Nosso Amor</title>
+<link rel="icon" type="image/jpeg" href="https://i.imgur.com/VleT3kX.jpeg" />
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
   * {
@@ -483,41 +486,31 @@ const modal = document.getElementById("modal");
 const modalImage = document.getElementById("modalImage");
 const modalCloseBtn = modal.querySelector(".modal-close");
 
-function openModal(imgSrc, imgAlt){
+function openModal(imgSrc, imgAlt) {
   modalImage.src = imgSrc;
   modalImage.alt = imgAlt;
   modal.classList.add("show");
   modalImage.focus();
   document.body.style.overflow = "hidden";
-  animationStarted = false; // parar animação durante modal aberto
+  animationStarted = false; // Pausa animação ao abrir modal
 }
 
-function closeModal(){
+function closeModal() {
   modal.classList.remove("show");
   modalImage.src = "";
   modalImage.alt = "";
   document.body.style.overflow = "";
-  startPhotoAnimation(); // reiniciar animação depois de fechar modal
+  startPhotoAnimation(); // Retoma animação ao fechar modal
 }
 
 modalCloseBtn.addEventListener("click", closeModal);
 modal.addEventListener("click", e => {
-  if(e.target === modal) closeModal();
+  if (e.target === modal) closeModal();
 });
 document.addEventListener("keydown", e => {
-  if(e.key === "Escape" && modal.classList.contains("show")) closeModal();
+  if (e.key === "Escape" && modal.classList.contains("show")) closeModal();
 });
 
-window.addEventListener("load", () => {
-  // Fotos só aparecem depois de abrir a carta
-});
-window.addEventListener("resize", () => {
-  if(animationStarted){
-    document.querySelectorAll(".dynamic-photo").forEach(img => img.remove());
-    animationStarted = false;
-    startPhotoAnimation();
-  }
-});
 </script>
 </body>
 </html>

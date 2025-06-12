@@ -142,6 +142,8 @@
     user-select: none;
     z-index: 5;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+    will-change: transform, left, top;
+    transition: opacity 0.3s ease;
   }
   .dynamic-photo:hover {
     opacity: 0.8;
@@ -363,6 +365,17 @@ function createDynamicPhotosOutsideContainer() {
   });
 }
 
+// Função simples para troca de velocidades após colisão
+function collideVelocity(photoA, photoB) {
+  const vxTemp = photoA.vx;
+  const vyTemp = photoA.vy;
+  photoA.vx = photoB.vx;
+  photoA.vy = photoB.vy;
+  photoB.vx = vxTemp;
+  photoB.vy = vyTemp;
+}
+
+// Função para detectar colisão entre dois quadrados (fotos)
 function detectCollision(a, b) {
   return !(a.x + a.size < b.x || a.x > b.x + b.size || a.y + a.size < b.y || a.y > b.y + b.size);
 }
@@ -377,45 +390,48 @@ function animatePhotos() {
     photo.x += photo.vx;
     photo.y += photo.vy;
 
-    // Colisão com bordas laterais esquerda e direita
+    // Colisões com bordas permitindo espaço lateral e vertical
     if(photo.x <= 10) photo.vx = Math.abs(photo.vx);
     if(photo.x + photo.size >= containerRect.left - 10 && photo.x < containerRect.left) photo.vx = -Math.abs(photo.vx);
     if(photo.x >= containerRect.right + 10 && photo.x + photo.size <= window.innerWidth - 10) photo.vx = -Math.abs(photo.vx);
     if(photo.x + photo.size >= window.innerWidth - 10) photo.vx = -Math.abs(photo.vx);
 
-    // Colisão com topo e base da janela
     if(photo.y <= 10) photo.vy = Math.abs(photo.vy);
     if(photo.y + photo.size >= window.innerHeight - 10) photo.vy = -Math.abs(photo.vy);
 
-    // Colisão simples com outras fotos
+    // Colisão entre fotos, troca direções suavemente sem travar
     for(let j = i + 1; j < animatedPhotos.length; j++) {
       let other = animatedPhotos[j];
       if(detectCollision(photo, other)) {
-        // Inverte as velocidades horizontal e vertical para ambos (simples reflexão)
-        let tempVx = photo.vx;
-        let tempVy = photo.vy;
-        photo.vx = -other.vx;
-        photo.vy = -other.vy;
-        other.vx = -tempVx;
-        other.vy = -tempVy;
+        // Ajusta posições para evitar ficar grudadas
+        const overlapX = (photo.x + photo.size) - other.x;
+        const overlapY = (photo.y + photo.size) - other.y;
 
-        // Ajusta posições para evitar sobreposição extremamente grudada
-        if(photo.x < other.x) {
-          photo.x -= 1;
-          other.x += 1;
-        } else {
-          photo.x += 1;
-          other.x -= 1;
+        if(overlapX > 0 && overlapY > 0){
+          // Move as fotos longe uma da outra proporcionalmente
+          const pushX = overlapX / 2 + 1;
+          const pushY = overlapY / 2 + 1;
+
+          if(photo.x < other.x){
+            photo.x -= pushX;
+            other.x += pushX;
+          } else {
+            photo.x += pushX;
+            other.x -= pushX;
+          }
+          if(photo.y < other.y){
+            photo.y -= pushY;
+            other.y += pushY;
+          } else {
+            photo.y += pushY;
+            other.y -= pushY;
+          }
         }
-        if(photo.y < other.y) {
-          photo.y -= 1;
-          other.y += 1;
-        } else {
-          photo.y += 1;
-          other.y -= 1;
-        }
+
+        collideVelocity(photo, other);
       }
     }
+
     photo.element.style.left = `${photo.x}px`;
     photo.element.style.top = `${photo.y}px`;
   }
@@ -428,7 +444,7 @@ function startPhotoAnimation() {
   if(animationStarted) return;
   animationStarted = true;
   animatedPhotos = [];
-  document.querySelectorAll('.dynamic-photo').forEach(img => img.remove());
+  document.querySelectorAll('.dynamic-photo').forEach(img=>img.remove());
   createDynamicPhotosOutsideContainer();
   animatePhotos();
 }
@@ -443,7 +459,6 @@ function openModal(imgSrc, imgAlt) {
   modal.classList.add('show');
   modalImage.focus();
   document.body.style.overflow = 'hidden';
-  // pausa animação
   animationStarted = false;
 }
 
@@ -452,7 +467,6 @@ function closeModal() {
   modalImage.src = '';
   modalImage.alt = '';
   document.body.style.overflow = '';
-  // retoma animação
   startPhotoAnimation();
 }
 

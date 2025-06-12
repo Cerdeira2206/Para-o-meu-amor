@@ -1,1 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Para Thaylla Mariane - Nosso Amor</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+  /* Reset e base */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #fce1e4 0%, #f9d5e5 45%, #fbc8d4 100%);
+    color: #4a1a2a;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 32px 16px;
+  }
+
+  .container {
+    max-width: 700px;
+    background: rgba(255 255 255 / 0.85);
+    border-radius: 20px;
+    box-shadow: 0 12px 30px rgba(255, 105, 180, 0.25);
+    padding: 40px 32px;
+    text-align: center;
+  }
+
+  h1 {
+    font-weight: 900;
+    font-size: 3rem;
+    margin-bottom: 16px;
+    color: #b62859;
+    letter-spacing: 1.4px;
+  }
+
+  h2 {
+    margin-top: 12px;
+    color: #a13d6d;
+    font-weight: 600;
+    font-size: 1.4rem;
+  }
+
+  p.message {
+    margin: 32px 0;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: #6f2a47;
+    font-style: italic;
+  }
+
+  .countdown {
+    background: #f9a8d4;
+    color: white;
+    font-weight: 700;
+    font-size: 1.8rem;
+    padding: 20px 0;
+    border-radius: 14px;
+    box-shadow: 0 5px 10px rgba(181, 75, 119, 0.6);
+    margin-top: 40px;
+    user-select: none;
+    white-space: pre-line;
+  }
+
+  /* Galeria de fotos */
+  .photo-gallery {
+    margin-top: 48px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 20px;
+    justify-items: center;
+  }
+
+  .photo-gallery img {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(219, 112, 147, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+  }
+
+  .photo-gallery img:hover,
+  .photo-gallery img:focus {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(219, 112, 147, 0.7);
+    outline: none;
+  }
+
+  footer {
+    margin-top: 48px;
+    font-size: 0.875rem;
+    color: #a86f8c;
+  }
+
+  /* Coração animado */
+  .heart {
+    font-size: 4rem;
+    color: #d81e5b;
+    animation: beat 1.2s infinite cubic-bezier(.215,.61,.355,1);
+    margin-bottom: 24px;
+  }
+
+  @keyframes beat {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+  }
+
+  /* Responsivo */
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 2.4rem;
+    }
+    .countdown {
+      font-size: 1.4rem;
+      padding: 16px 0;
+    }
+    .container {
+      padding: 24px 16px;
+    }
+    p.message {
+      font-size: 1rem;
+    }
+    .photo-gallery {
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 16px;
+    }
+    .photo-gallery img {
+      width: 100px;
+      height: 100px;
+    }
+  }
+
+  /* Modal para visualização maior das fotos */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    backdrop-filter: blur(8px);
+    background-color: rgba(0,0,0,0.75);
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal.show {
+    display: flex;
+  }
+
+  .modal-content {
+    max-width: 90vw;
+    max-height: 90vh;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(219, 112, 147, 0.9);
+    outline: none;
+  }
+
+  .modal-content img {
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+    object-fit: contain;
+  }
+
+  /* Botão fechar */
+  .modal-close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background: #d81e5b;
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 2rem;
+    width: 48px;
+    height: 48px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(219, 112, 147, 0.7);
+    transition: background-color 0.3s ease;
+  }
+
+  .modal-close:hover,
+  .modal-close:focus {
+    background-color: #a71c45;
+    outline: none;
+  }
+</style>
+</head>
+<body>
+  <main class="container" role="main" aria-label="Mensagem de amor para Thaylla Mariane">
+    <div class="heart" aria-hidden="true">❤</div>
+    <h1>Para Thaylla Mariane</h1>
+    <h2>Nosso amor desde 27/09/2023</h2>
+    <p class="message" aria-live="polite">
+      "Amar você é descobrir todos os dias motivos para sorrir, para sonhar e para ser feliz. Que nosso amor continue crescendo com ternura, carinho e cumplicidade."
+    </p>
+    <div class="countdown" aria-live="assertive" aria-atomic="true" id="timeTogether" title="Tempo desde o início do namoro">
+      Carregando...
+    </div>
+
+    <section class="photo-gallery" aria-label="Galeria de fotos do casal">
+      <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/5ab547c6-d8a6-4dd2-9986-653945fda444.png" alt="Foto romântica do casal Thaylla Mariane e parceiro juntos sorrindo em parque ensolarado" tabindex="0" />
+      <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/68c44898-33dd-4071-8d03-f8875be288da.png" alt="Foto do casal Thaylla Mariane abraçados sob luz suave com sorriso feliz" tabindex="0" />
+      <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/e790cdca-e025-45e2-b3da-630be1590579.png" alt="Foto artística do casal segurando mãos lado a lado em fundo desfocado" tabindex="0" />
+      <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/7ab96bf9-8501-4e97-b681-250e858d5ecf.png" alt="Foto descontraída do casal Thaylla Mariane e parceiro curtindo café juntos" tabindex="0" />
+    </section>
+
+    <footer>
+      Feito com amor para você, minha Thaylla Mariane.
+    </footer>
+  </main>
+
+  <!-- Modal para ampliar as fotos -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Visualização da foto ampliada">
+    <button class="modal-close" aria-label="Fechar visualização">&times;</button>
+    <div class="modal-content" tabindex="0">
+      <img src="" alt="" id="modalImage" />
+    </div>
+  </div>
+
+  <script>
+    // Calcula a diferença detalhada ano, mês, dia, hora, minuto, segundo entre startDate e agora
+    function calculateDetailedTime(startDate, now) {
+      let years = now.getFullYear() - startDate.getFullYear();
+      let months = now.getMonth() - startDate.getMonth();
+      let days = now.getDate() - startDate.getDate();
+      let hours = now.getHours() - startDate.getHours();
+      let minutes = now.getMinutes() - startDate.getMinutes();
+      let seconds = now.getSeconds() - startDate.getSeconds();
+
+      if(seconds < 0) {
+        seconds += 60;
+        minutes--;
+      }
+      if(minutes < 0) {
+        minutes += 60;
+        hours--;
+      }
+      if(hours < 0) {
+        hours += 24;
+        days--;
+      }
+      if(days < 0) {
+        // Ajustar para mês anterior
+        let prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+        days += prevMonth.getDate();
+        months--;
+      }
+      if(months < 0) {
+        months += 12;
+        years--;
+      }
+
+      return { years, months, days, hours, minutes, seconds };
+    }
+
+    function formatPlural(value, singular, plural) {
+      return `${value} ${value === 1 ? singular : plural}`;
+    }
+
+    function updateDetailedCountdown() {
+      const startDate = new Date(2023, 8, 27, 0, 0, 0); // 27/09/2023 00:00:00
+      const now = new Date();
+
+      const { years, months, days, hours, minutes, seconds } = calculateDetailedTime(startDate, now);
+      const element = document.getElementById('timeTogether');
+
+      let parts = [];
+      if(years > 0) parts.push(formatPlural(years, 'ano', 'anos'));
+      if(months > 0 || years > 0) parts.push(formatPlural(months, 'mês', 'meses'));
+      parts.push(formatPlural(days, 'dia', 'dias'));
+      parts.push(formatPlural(hours, 'hora', 'horas'));
+      parts.push(formatPlural(minutes, 'minuto', 'minutos'));
+      parts.push(formatPlural(seconds, 'segundo', 'segundos'));
+
+      element.textContent = parts.join(', ');
+    }
+
+    updateDetailedCountdown();
+    setInterval(updateDetailedCountdown, 1000);
+
+    // Modal de visualização das fotos
+    const modal = document.getElementById('modal');
+    const modalImage = document.getElementById('modalImage');
+    const modalCloseBtn = modal.querySelector('.modal-close');
+
+    function openModal(imgSrc, imgAlt) {
+      modalImage.src = imgSrc;
+      modalImage.alt = imgAlt;
+      modal.classList.add('show');
+      modalImage.focus();
+      document.body.style.overflow = 'hidden'; // Impede scroll do fundo
+    }
+
+    function closeModal() {
+      modal.classList.remove('show');
+      modalImage.src = '';
+      modalImage.alt = '';
+      document.body.style.overflow = '';
+    }
+
+    // Abrir modal ao clicar em qualquer imagem da galeria
+    document.querySelectorAll('.photo-gallery img').forEach(img => {
+      img.addEventListener('click', () => {
+        openModal(img.src.replace(/140x140\/png/, '600x600/png'), img.alt);
+      });
+      img.addEventListener('keydown', e => {
+        if(e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openModal(img.src.replace(/140x140\/png/, '600x600/png'), img.alt);
+        }
+      });
+    });
+
+    // Fechar modal ao clicar no botão de fechar
+    modalCloseBtn.addEventListener('click', closeModal);
+
+    // Fechar modal ao clicar fora da imagem no modal
+    modal.addEventListener('click', e => {
+      if(e.target === modal) {
+        closeModal();
+      }
+    });
+
+    // Fechar modal ao pressionar tecla Escape
+    document.addEventListener('keydown', e => {
+      if(e.key === 'Escape' && modal.classList.contains('show')) {
+        closeModal();
+      }
+    });
+  </script>
+</body>
+</html>
+
 

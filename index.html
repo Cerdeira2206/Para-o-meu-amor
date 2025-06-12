@@ -73,7 +73,7 @@
     max-width: 700px;
     background: rgba(255 255 255 / 0.85);
     border-radius: 20px;
-    box-shadow: 0 12px 30px rgba(255 105 180 / 0.25);
+    box-shadow: 0 12px 30px rgba(255, 105, 180, 0.25);
     padding: 40px 32px;
     text-align: center;
     margin: 32px auto 64px;
@@ -214,7 +214,21 @@
     <h1 class="content-title">Para Thaylla Mariane</h1>
     <h2>Nosso amor desde 27/09/2023</h2>
     <p class="message" aria-live="polite">
-      "Amar você é descobrir todos os dias motivos para sorrir, para sonhar e para ser feliz. Que nosso amor continue crescendo com ternura, carinho e cumplicidade."
+      "Ao meu doce amor, Thaylla Mariane,<br><br>
+      Em você eu me inspiro.<br>
+      Dedico meu amor totalmente à sua pessoa.<br>
+      Me encho de alegria e carinho quando te vejo:<br>
+      seu sorriso lindo, sua voz suave, seus traços tão perfeitos.<br><br>
+      Sinto uma admiração imensa pela mulher que você foi, é e está se tornando.<br>
+      Você talvez não tenha ideia da imensidão da paixão que eu sinto por você,<br>
+      do quanto você me inspira.<br>
+      Passo dia após dia te amando e aprendendo contigo.<br><br>
+      Estar ao seu lado é animador, leve, confortável.<br>
+      Neste Dia dos Namorados, faltam palavras pra expressar o quanto sou grato por ter você.<br>
+      Te conheço há tanto tempo… e ainda assim quero te conhecer muito mais.<br>
+      Quero viver tudo que ainda está por vir ao seu lado.<br><br>
+      Apenas gratidão.<br>
+      Te amo."
     </p>
     <div class="countdown" aria-live="assertive" aria-atomic="true" id="timeTogether" title="Tempo desde o início do namoro">
       Carregando...
@@ -395,120 +409,3 @@ function resolveCollision(a,b){
   const speed = vxRel * nx + vyRel * ny;
   if (speed > 0) return; // afastando-se, não resolve
 
-  // Coeficiente restituição = 1 (elástica)
-  const e = 1;
-
-  // Impulso scalar
-  const impulse = (-(1 + e) * speed) / (1 / a.mass + 1 / b.mass);
-
-  // Aplica velocidades
-  const impulseX = impulse * nx;
-  const impulseY = impulse * ny;
-
-  a.vx += impulseX / a.mass;
-  a.vy += impulseY / a.mass;
-  b.vx -= impulseX / b.mass;
-  b.vy -= impulseY / b.mass;
-}
-
-function animatePhotos() {
-  for(let i = 0; i < animatedPhotos.length; i++) {
-    let photo = animatedPhotos[i];
-
-    photo.x += photo.vx;
-    photo.y += photo.vy;
-
-    // Colisão com as bordas da viewport
-    if(photo.x <= 10) {
-      photo.x = 10;
-      photo.vx = Math.abs(photo.vx);
-    }
-    if(photo.x + photo.size >= window.innerWidth - 10) {
-      photo.x = window.innerWidth - 10 - photo.size;
-      photo.vx = -Math.abs(photo.vx);
-    }
-    if(photo.y <= 10) {
-      photo.y = 10;
-      photo.vy = Math.abs(photo.vy);
-    }
-    if(photo.y + photo.size >= window.innerHeight - 10) {
-      photo.y = window.innerHeight - 10 - photo.size;
-      photo.vy = -Math.abs(photo.vy);
-    }
-  }
-
-  // Colisão entre fotos, ajustando velocidades sem teletransporte
-  for(let i = 0; i < animatedPhotos.length; i++) {
-    for(let j = i + 1; j < animatedPhotos.length; j++) {
-      let a = animatedPhotos[i];
-      let b = animatedPhotos[j];
-      if(detectCollisionCircles(a, b)) {
-        resolveCollision(a,b);
-        // Ajustar posições mínimas para evitar sobreposição forte:
-        const dx = (a.x + a.size/2) - (b.x + b.size/2);
-        const dy = (a.y + a.size/2) - (b.y + b.size/2);
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        const overlap = ((a.size + b.size)/2) - dist;
-        if(overlap > 0){
-          const pushX = (dx/dist)*(overlap/2);
-          const pushY = (dy/dist)*(overlap/2);
-          a.x += pushX;
-          a.y += pushY;
-          b.x -= pushX;
-          b.y -= pushY;
-        }
-      }
-    }
-  }
-
-  animatedPhotos.forEach(photo => {
-    photo.element.style.left = photo.x + "px";
-    photo.element.style.top = photo.y + "px";
-  });
-
-  requestAnimationFrame(animatePhotos);
-}
-
-let animationStarted = false;
-
-function startPhotoAnimation() {
-  if(animationStarted) return;
-  animationStarted = true;
-  animatedPhotos = [];
-  document.querySelectorAll(".dynamic-photo").forEach(img => img.remove());
-  createDynamicPhotos();
-  animatePhotos();
-}
-
-const modal = document.getElementById("modal");
-const modalImage = document.getElementById("modalImage");
-const modalCloseBtn = modal.querySelector(".modal-close");
-
-function openModal(imgSrc, imgAlt) {
-  modalImage.src = imgSrc;
-  modalImage.alt = imgAlt;
-  modal.classList.add("show");
-  modalImage.focus();
-  document.body.style.overflow = "hidden";
-  animationStarted = false; // Pausa animação ao abrir modal
-}
-
-function closeModal() {
-  modal.classList.remove("show");
-  modalImage.src = "";
-  modalImage.alt = "";
-  document.body.style.overflow = "";
-  startPhotoAnimation(); // Retoma animação ao fechar modal
-}
-
-modalCloseBtn.addEventListener("click", closeModal);
-modal.addEventListener("click", e => {
-  if (e.target === modal) closeModal();
-});
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape" && modal.classList.contains("show")) closeModal();
-});
-
-</script>
-</body>
-</html>

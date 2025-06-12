@@ -86,20 +86,22 @@
   .title-container {
     position: relative;
     display: inline-block;
+    overflow: visible;
   }
 
   .hearts {
     position: absolute;
-    top: -40px;
+    top: -60px;
     left: 50%;
     transform: translateX(-50%);
     width: 200%;
-    height: 60px;
+    height: 80px;
     pointer-events: none;
     overflow: visible;
+    z-index: 20;
   }
 
-  .heart {
+  .heart-bubble {
     position: absolute;
     color: #d81e5b;
     font-size: 1.6rem;
@@ -118,7 +120,7 @@
       opacity: 1;
     }
     100% {
-      top: 120px;
+      top: 130px;
       opacity: 0;
       transform: translateX(50px) rotate(360deg);
     }
@@ -551,7 +553,7 @@ const heartsContainerSelector = ".hearts";
 function createHeart() {
   const heart = document.createElement("span");
   heart.textContent = "❤";
-  heart.className = "heart";
+  heart.className = "heart-bubble";
   heart.style.left = Math.random() * 100 + "%";
   heart.style.animationDuration = 3 + Math.random() * 3 + "s";
   heart.style.fontSize = 12 + Math.random() * 16 + "px";
@@ -607,7 +609,7 @@ document.addEventListener("keydown", e => {
     closeModal();
   }
 });
-
 </script>
 </body>
 </html>
+

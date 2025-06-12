@@ -215,10 +215,10 @@
     </div>
 
     <section class="photo-gallery" aria-label="Galeria de fotos do casal">
-      <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/5ab547c6-d8a6-4dd2-9986-653945fda444.png" alt="Foto romântica do casal Thaylla Mariane e parceiro juntos sorrindo em parque ensolarado" tabindex="0" />
-      <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/68c44898-33dd-4071-8d03-f8875be288da.png" alt="Foto do casal Thaylla Mariane abraçados sob luz suave com sorriso feliz" tabindex="0" />
-      <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/e790cdca-e025-45e2-b3da-630be1590579.png" alt="Foto artística do casal segurando mãos lado a lado em fundo desfocado" tabindex="0" />
-      <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/7ab96bf9-8501-4e97-b681-250e858d5ecf.png" alt="Foto descontraída do casal Thaylla Mariane e parceiro curtindo café juntos" tabindex="0" />
+      <img src="https://i.imgur.com/1ViRU_vNv3SJUPNWpd8jQwGpKnj0v_ron.jpeg" alt="Foto romântica do casal Thaylla Mariane e parceiro juntos sorrindo em parque ensolarado" tabindex="0" />
+      <img src="https://i.imgur.com/ae66oWG.jpeg" alt="Foto do casal Thaylla Mariane abraçados sob luz suave com sorriso feliz" tabindex="0" />
+      <img src="https://i.imgur.com/MYPe0vj.jpeg" alt="Foto artística do casal segurando mãos lado a lado em fundo desfocado" tabindex="0" />
+      <img src="https://i.imgur.com/qDpICTY.jpeg" alt="Foto descontraída do casal Thaylla Mariane e parceiro curtindo café juntos" tabindex="0" />
     </section>
 
     <footer>
@@ -318,12 +318,12 @@
     // Abrir modal ao clicar em qualquer imagem da galeria
     document.querySelectorAll('.photo-gallery img').forEach(img => {
       img.addEventListener('click', () => {
-        openModal(img.src.replace(/140x140\/png/, '600x600/png'), img.alt);
+        openModal(img.src, img.alt);
       });
       img.addEventListener('keydown', e => {
         if(e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          openModal(img.src.replace(/140x140\/png/, '600x600/png'), img.alt);
+          openModal(img.src, img.alt);
         }
       });
     });
@@ -347,5 +347,4 @@
   </script>
 </body>
 </html>
-
 

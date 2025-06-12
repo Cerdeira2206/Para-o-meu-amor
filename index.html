@@ -1,482 +1,665 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Para Thaylla Mariane - Nosso Amor</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  html, body {
-    height: 100%;
-    font-family: 'Poppins', sans-serif;
-    overflow: hidden;
-    background: linear-gradient(135deg, #fce1e4 0%, #f9d5e5 45%, #fbc8d4 100%);
-  }
-  #envelopeOverlay {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 320px;
-    height: 420px;
-    background: linear-gradient(145deg, #f8c0d3 0%, #f05a8f 100%);
-    border-radius: 30px 30px 10px 10px;
-    box-shadow: 0 12px 20px rgba(220, 20, 80, 0.5);
-    cursor: pointer;
-    color: white;
-    user-select: none;
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    perspective: 1500px;
-    transition: filter 0.3s;
-  }
-  #envelopeOverlay.open {
-    animation: openEnvelope 1.3s forwards;
-    cursor: default;
-    filter: drop-shadow(0 0 20px rgba(255,105,180,0.8));
-  }
-  @keyframes openEnvelope {
-    0%   { transform: rotateY(0deg); }
-    30%  { transform: rotateY(-25deg) scale3d(1.05,1.05,1.05); }
-    60%  { transform: rotateY(-110deg) scale3d(1.1,1.1,1.1); }
-    100% { transform: rotateY(-180deg) scale3d(1,1,1); opacity: 0; }
-  }
-  #envelopeContent {
-    text-align: center;
-    font-weight: 700;
-    font-size: 2.5rem;
-    letter-spacing: 2px;
-    text-shadow: 0 0 20px rgba(255 255 255 / 0.7);
-    padding: 20px 40px;
-    border-radius: 20px;
-    border: 4px solid white;
-    background: linear-gradient(135deg, #fce1e4, #f9d5e5);
-    box-shadow: 0 0 60px rgba(255 105 180 / 0.7);
-    user-select: none;
-  }
-  #siteContent {
-    display: none;
-    height: 100%;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  .container {
-    max-width: 700px;
-    background: rgba(255 255 255 / 0.85);
-    border-radius: 20px;
-    box-shadow: 0 12px 30px rgba(255 105 180 / 0.25);
-    padding: 40px 32px;
-    text-align: center;
-    margin: 32px auto 64px;
-    position: relative;
-    z-index: 10;
-  }
-  h1.content-title {
-    font-weight: 900;
-    font-size: 3rem;
-    margin-bottom: 16px;
-    color: #b62859;
-    letter-spacing: 1.4px;
-  }
-  h2 {
-    margin-top: 12px;
-    color: #a13d6d;
-    font-weight: 600;
-    font-size: 1.4rem;
-  }
-  p.message {
-    margin: 32px 0;
-    font-size: 1.2rem;
-    line-height: 1.6;
-    color: #6f2a47;
-    font-style: italic;
-  }
-  .countdown {
-    background: #f9a8d4;
-    color: white;
-    font-weight: 700;
-    font-size: 1.8rem;
-    padding: 20px 0;
-    border-radius: 14px;
-    box-shadow: 0 5px 10px rgba(181, 75, 119, 0.6);
-    margin-top: 40px;
-    user-select: none;
-    white-space: pre-line;
-  }
-  footer {
-    margin-top: 48px;
-    font-size: 0.875rem;
-    color: #a86f8c;
-  }
-  .heart {
-    font-size: 4rem;
-    color: #d81e5b;
-    animation: beat 1.2s infinite cubic-bezier(.215,.61,.355,1);
-    margin-bottom: 24px;
-  }
-  @keyframes beat {
-    0%, 100% { transform: scale(1); }
-    50%      { transform: scale(1.2); }
-  }
-  @media(max-width:480px){
-    h1.content-title { font-size: 2.4rem; }
-    .countdown { font-size: 1.4rem; padding: 16px 0; }
-    .container { padding: 24px 16px; }
-    p.message { font-size: 1rem; }
-  }
-  .dynamic-photo {
-    position: fixed;
-    border-radius: 12px;
-    box-shadow: 0 6px 15px rgba(219, 112, 147, 0.5);
-    object-fit: cover;
-    opacity: 0.5;
-    cursor: pointer;
-    user-select: none;
-    z-index: 5;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
-    will-change: transform, left, top;
-    transition: opacity 0.3s ease;
-  }
-  .dynamic-photo:hover {
-    opacity: 0.8;
-    transform: scale(1.1);
-    z-index: 20;
-    filter: drop-shadow(0 5px 10px rgba(219, 112, 147, 0.8));
-  }
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 3000;
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
-    backdrop-filter: blur(8px);
-    background-color: rgba(0,0,0,0.75);
-    align-items: center;
-    justify-content: center;
-  }
-  .modal.show {
-    display: flex;
-  }
-  .modal-content {
-    max-width: 90vw;
-    max-height: 90vh;
-    border-radius: 20px;
-    box-shadow: 0 8px 30px rgba(219, 112, 147, 0.9);
-    outline: none;
-  }
-  .modal-content img {
-    width: 100%;
-    height: auto;
-    border-radius: 20px;
-    object-fit: contain;
-  }
-  .modal-close {
-    position: absolute;
-    top: 24px;
-    right: 24px;
-    background: #d81e5b;
-    border: none;
-    border-radius: 50%;
-    color: white;
-    font-size: 2rem;
-    width: 48px;
-    height: 48px;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(219, 112, 147, 0.7);
-    transition: background-color 0.3s ease;
-  }
-  .modal-close:hover,
-  .modal-close:focus {
-    background-color: #a71c45;
-    outline: none;
-  }
-</style>
-</head>
-<body>
-<div id="envelopeOverlay" role="button" tabindex="0" aria-label="Clique para abrir a carta de amor">
-  <div id="envelopeContent">Carta para Thaylla Mariane</div>
-</div>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Para Thaylla Mariane - Nosso Amor</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
 
-<div id="siteContent" aria-hidden="true" style="display:none;">
-  <main class="container" role="main" aria-label="Mensagem de amor para Thaylla Mariane">
-    <div class="heart" aria-hidden="true">❤</div>
-    <h1 class="content-title">Para Thaylla Mariane</h1>
-    <h2>Nosso amor desde 27/09/2023</h2>
-    <p class="message" aria-live="polite">
-      "Amar você é descobrir todos os dias motivos para sorrir, para sonhar e para ser feliz. Que nosso amor continue crescendo com ternura, carinho e cumplicidade."
-    </p>
-    <div class="countdown" aria-live="assertive" aria-atomic="true" id="timeTogether" title="Tempo desde o início do namoro">
-      Carregando...
-    </div>
-    <footer>Feito com amor para você, minha Thaylla Mariane.</footer>
-  </main>
-</div>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-<!-- Modal para ampliar as fotos -->
-<div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Visualização da foto ampliada">
-  <button class="modal-close" aria-label="Fechar visualização">&times;</button>
-  <div class="modal-content" tabindex="0">
-    <img src="" alt="" id="modalImage" />
-  </div>
-</div>
+    html,
+    body {
+      height: 100%;
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden;
+      background: linear-gradient(135deg, #fce1e4 0%, #f9d5e5 45%, #fbc8d4 100%);
+    }
 
-<script>
-const envelopeOverlay = document.getElementById('envelopeOverlay');
-const siteContent = document.getElementById('siteContent');
+    #envelopeOverlay {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 320px;
+      height: 420px;
+      background: linear-gradient(145deg, #f8c0d3 0%, #f05a8f 100%);
+      border-radius: 30px 30px 10px 10px;
+      box-shadow: 0 12px 20px rgba(220, 20, 80, 0.5);
+      cursor: pointer;
+      color: white;
+      user-select: none;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      perspective: 1500px;
+      transition: filter 0.3s;
+    }
 
-envelopeOverlay.addEventListener('click', openEnvelope);
-envelopeOverlay.addEventListener('keydown', e => {
-  if (e.key === 'Enter' || e.key === ' ') {
-    e.preventDefault();
-    openEnvelope();
-  }
-});
+    #envelopeOverlay.open {
+      animation: openEnvelope 1.3s forwards;
+      cursor: default;
+      filter: drop-shadow(0 0 20px rgba(255, 105, 180, 0.8));
+    }
 
-function openEnvelope() {
-  envelopeOverlay.style.animation = 'openEnvelopeAnim 1.2s forwards';
-  envelopeOverlay.style.pointerEvents = 'none';
-  setTimeout(() => {
-    envelopeOverlay.style.display = 'none';
-    siteContent.style.display = 'block';
-    siteContent.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'auto';
-    startPhotoAnimation();
-  }, 1200);
-}
-
-const style = document.createElement('style');
-style.textContent = `
-@keyframes openEnvelopeAnim {
-  0% { transform: scale(1) rotateY(0deg); opacity: 1; }
-  100% { transform: scale(1.6) rotateY(180deg); opacity: 0; }
-}`;
-document.head.appendChild(style);
-
-const allPhotos = [
-  "https://i.imgur.com/hdvYGWu.jpeg",
-  "https://i.imgur.com/BjKR2sl.jpeg",
-  "https://i.imgur.com/3yhPhMg.jpeg",
-  "https://i.imgur.com/U1IJPye.jpeg",
-  "https://i.imgur.com/RGl3Vjp.jpeg",
-  "https://i.imgur.com/DihovPQ.jpeg",
-  "https://i.imgur.com/jhgPEE5.jpeg",
-  "https://i.imgur.com/CiF1e87.jpeg",
-  "https://i.imgur.com/6ExQF2I.jpeg",
-  "https://i.imgur.com/cVkPQEq.jpeg",
-  "https://i.imgur.com/AIomgPP.jpeg"
-];
-
-function calculateDetailedTime(startDate, now) {
-  let years = now.getFullYear() - startDate.getFullYear();
-  let months = now.getMonth() - startDate.getMonth();
-  let days = now.getDate() - startDate.getDate();
-  let hours = now.getHours() - startDate.getHours();
-  let minutes = now.getMinutes() - startDate.getMinutes();
-  let seconds = now.getSeconds() - startDate.getSeconds();
-
-  if(seconds < 0) { seconds += 60; minutes--; }
-  if(minutes < 0) { minutes += 60; hours--; }
-  if(hours < 0) { hours += 24; days--; }
-  if(days < 0) { 
-    let prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-    days += prevMonth.getDate();
-    months--;
-  }
-  if(months < 0) { months += 12; years--; }
-
-  return { years, months, days, hours, minutes, seconds };
-}
-
-function formatPlural(value, singular, plural) {
-  return `${value} ${value === 1 ? singular : plural}`;
-}
-
-function updateDetailedCountdown() {
-  const startDate = new Date(2023, 8, 27);
-  const now = new Date();
-
-  const { years, months, days, hours, minutes, seconds } = calculateDetailedTime(startDate, now);
-  const element = document.getElementById('timeTogether');
-
-  let parts = [];
-  if(years > 0) parts.push(formatPlural(years, 'ano', 'anos'));
-  if(months > 0 || years > 0) parts.push(formatPlural(months, 'mês', 'meses'));
-  parts.push(formatPlural(days, 'dia', 'dias'));
-  parts.push(formatPlural(hours, 'hora', 'horas'));
-  parts.push(formatPlural(minutes, 'minuto', 'minutos'));
-  parts.push(formatPlural(seconds, 'segundo', 'segundos'));
-
-  element.textContent = parts.join(', ');
-}
-
-updateDetailedCountdown();
-setInterval(updateDetailedCountdown, 1000);
-
-let animatedPhotos = [];
-
-function createDynamicPhotosOutsideContainer() {
-  const container = document.querySelector('.container');
-  const containerRect = container.getBoundingClientRect();
-
-  animatedPhotos = allPhotos.map((src, index) => {
-    const img = document.createElement('img');
-    img.src = src;
-    img.alt = `Foto decorativa ${index + 1}`;
-    img.className = 'dynamic-photo';
-
-    const size = 80 + Math.random() * 80;
-    img.style.width = `${size}px`;
-    img.style.height = `${size}px`;
-
-    const leftSpace = containerRect.left;
-    const rightSpace = window.innerWidth - containerRect.right;
-    const placeLeft = Math.random() < 0.5;
-    let x = 0;
-    if(placeLeft) x = Math.random() * (leftSpace - size - 10) + 10;
-    else x = containerRect.right + Math.random() * (rightSpace - size - 10) + 10;
-    const y = Math.random() * (window.innerHeight - size - 20) + 10;
-
-    img.style.left = `${x}px`;
-    img.style.top = `${y}px`;
-    img.style.opacity = 0.5 + Math.random() * 0.3;
-
-    img.tabIndex = 0;
-    img.addEventListener('click', () => openModal(img.src, img.alt));
-    img.addEventListener('keydown', e => {
-      if(e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        openModal(img.src, img.alt);
+    @keyframes openEnvelope {
+      0% {
+        transform: rotateY(0deg);
       }
-    });
 
-    document.body.appendChild(img);
+      30% {
+        transform: rotateY(-25deg) scale3d(1.05, 1.05, 1.05);
+      }
 
-    return { element: img, x, y, size, vx: (Math.random() * 0.3 + 0.05)*(Math.random() < 0.5 ? 1 : -1), vy: (Math.random() * 0.3 + 0.05)*(Math.random() < 0.5 ? 1 : -1) };
-  });
-}
+      60% {
+        transform: rotateY(-110deg) scale3d(1.1, 1.1, 1.1);
+      }
 
-// Função simples para troca de velocidades após colisão
-function collideVelocity(photoA, photoB) {
-  const vxTemp = photoA.vx;
-  const vyTemp = photoA.vy;
-  photoA.vx = photoB.vx;
-  photoA.vy = photoB.vy;
-  photoB.vx = vxTemp;
-  photoB.vy = vyTemp;
-}
-
-// Função para detectar colisão entre dois quadrados (fotos)
-function detectCollision(a, b) {
-  return !(a.x + a.size < b.x || a.x > b.x + b.size || a.y + a.size < b.y || a.y > b.y + b.size);
-}
-
-function animatePhotos() {
-  const container = document.querySelector('.container');
-  const containerRect = container.getBoundingClientRect();
-
-  for(let i = 0; i < animatedPhotos.length; i++) {
-    let photo = animatedPhotos[i];
-
-    photo.x += photo.vx;
-    photo.y += photo.vy;
-
-    // Colisões com bordas permitindo espaço lateral e vertical
-    if(photo.x <= 10) photo.vx = Math.abs(photo.vx);
-    if(photo.x + photo.size >= containerRect.left - 10 && photo.x < containerRect.left) photo.vx = -Math.abs(photo.vx);
-    if(photo.x >= containerRect.right + 10 && photo.x + photo.size <= window.innerWidth - 10) photo.vx = -Math.abs(photo.vx);
-    if(photo.x + photo.size >= window.innerWidth - 10) photo.vx = -Math.abs(photo.vx);
-
-    if(photo.y <= 10) photo.vy = Math.abs(photo.vy);
-    if(photo.y + photo.size >= window.innerHeight - 10) photo.vy = -Math.abs(photo.vy);
-
-    // Colisão entre fotos, troca direções suavemente sem travar
-    for(let j = i + 1; j < animatedPhotos.length; j++) {
-      let other = animatedPhotos[j];
-      if(detectCollision(photo, other)) {
-        // Ajusta posições para evitar ficar grudadas
-        const overlapX = (photo.x + photo.size) - other.x;
-        const overlapY = (photo.y + photo.size) - other.y;
-
-        if(overlapX > 0 && overlapY > 0){
-          // Move as fotos longe uma da outra proporcionalmente
-          const pushX = overlapX / 2 + 1;
-          const pushY = overlapY / 2 + 1;
-
-          if(photo.x < other.x){
-            photo.x -= pushX;
-            other.x += pushX;
-          } else {
-            photo.x += pushX;
-            other.x -= pushX;
-          }
-          if(photo.y < other.y){
-            photo.y -= pushY;
-            other.y += pushY;
-          } else {
-            photo.y += pushY;
-            other.y -= pushY;
-          }
-        }
-
-        collideVelocity(photo, other);
+      100% {
+        transform: rotateY(-180deg) scale3d(1, 1, 1);
+        opacity: 0;
       }
     }
 
-    photo.element.style.left = `${photo.x}px`;
-    photo.element.style.top = `${photo.y}px`;
-  }
-  requestAnimationFrame(animatePhotos);
-}
+    #envelopeContent {
+      text-align: center;
+      font-weight: 700;
+      font-size: 2.5rem;
+      letter-spacing: 2px;
+      text-shadow: 0 0 20px rgba(255 255 255 / 0.7);
+      padding: 20px 40px;
+      border-radius: 20px;
+      border: 4px solid white;
+      background: linear-gradient(135deg, #fce1e4, #f9d5e5);
+      box-shadow: 0 0 60px rgba(255 105 180 / 0.7);
+      user-select: none;
+    }
 
-let animationStarted = false;
+    #siteContent {
+      display: none;
+      height: 100%;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
 
-function startPhotoAnimation() {
-  if(animationStarted) return;
-  animationStarted = true;
-  animatedPhotos = [];
-  document.querySelectorAll('.dynamic-photo').forEach(img=>img.remove());
-  createDynamicPhotosOutsideContainer();
-  animatePhotos();
-}
+    .container {
+      max-width: 700px;
+      background: rgba(255 255 255 / 0.85);
+      border-radius: 20px;
+      box-shadow: 0 12px 30px rgba(255 105 180 / 0.25);
+      padding: 40px 32px;
+      text-align: center;
+      margin: 32px auto 64px;
+      position: relative;
+      z-index: 10;
+    }
 
-const modal = document.getElementById('modal');
-const modalImage = document.getElementById('modalImage');
-const modalCloseBtn = modal.querySelector('.modal-close');
+    h1.content-title {
+      font-weight: 900;
+      font-size: 3rem;
+      margin-bottom: 16px;
+      color: #b62859;
+      letter-spacing: 1.4px;
+    }
 
-function openModal(imgSrc, imgAlt) {
-  modalImage.src = imgSrc;
-  modalImage.alt = imgAlt;
-  modal.classList.add('show');
-  modalImage.focus();
-  document.body.style.overflow = 'hidden';
-  animationStarted = false;
-}
+    h2 {
+      margin-top: 12px;
+      color: #a13d6d;
+      font-weight: 600;
+      font-size: 1.4rem;
+    }
 
-function closeModal() {
-  modal.classList.remove('show');
-  modalImage.src = '';
-  modalImage.alt = '';
-  document.body.style.overflow = '';
-  startPhotoAnimation();
-}
+    p.message {
+      margin: 32px 0;
+      font-size: 1.2rem;
+      line-height: 1.6;
+      color: #6f2a47;
+      font-style: italic;
+    }
 
-modalCloseBtn.addEventListener('click', closeModal);
-modal.addEventListener('click', e => {
-  if(e.target === modal) closeModal();
-});
-document.addEventListener('keydown', e => {
-  if(e.key === 'Escape' && modal.classList.contains('show')) closeModal();
-});
-</script>
+    .countdown {
+      background: #f9a8d4;
+      color: white;
+      font-weight: 700;
+      font-size: 1.8rem;
+      padding: 20px 0;
+      border-radius: 14px;
+      box-shadow: 0 5px 10px rgba(181, 75, 119, 0.6);
+      margin-top: 40px;
+      user-select: none;
+      white-space: pre-line;
+    }
+
+    footer {
+      margin-top: 48px;
+      font-size: 0.875rem;
+      color: #a86f8c;
+    }
+
+    .heart {
+      font-size: 4rem;
+      color: #d81e5b;
+      animation: beat 1.2s infinite cubic-bezier(.215, .61, .355, 1);
+      margin-bottom: 24px;
+    }
+
+    @keyframes beat {
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.2);
+      }
+    }
+
+    @media(max-width:480px) {
+      h1.content-title {
+        font-size: 2.4rem;
+      }
+      .countdown {
+        font-size: 1.4rem;
+        padding: 16px 0;
+      }
+      .container {
+        padding: 24px 16px;
+      }
+      p.message {
+        font-size: 1rem;
+      }
+    }
+
+    .dynamic-photo {
+      position: fixed;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(219, 112, 147, 0.5);
+      object-fit: cover;
+      opacity: 0.5;
+      cursor: pointer;
+      user-select: none;
+      z-index: 5;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+      will-change: transform, left, top;
+      transition: opacity 0.3s ease;
+    }
+
+    .dynamic-photo:hover {
+      opacity: 0.8;
+      transform: scale(1.1);
+      z-index: 20;
+      filter: drop-shadow(0 5px 10px rgba(219, 112, 147, 0.8));
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 3000;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      backdrop-filter: blur(8px);
+      background-color: rgba(0, 0, 0, 0.75);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      max-width: 90vw;
+      max-height: 90vh;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(219, 112, 147, 0.9);
+      outline: none;
+    }
+
+    .modal-content img {
+      width: 100%;
+      height: auto;
+      border-radius: 20px;
+      object-fit: contain;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: #d81e5b;
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 2rem;
+      width: 48px;
+      height: 48px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(219, 112, 147, 0.7);
+      transition: background-color 0.3s ease;
+    }
+
+    .modal-close:hover,
+    .modal-close:focus {
+      background-color: #a71c45;
+      outline: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="envelopeOverlay" role="button" tabindex="0" aria-label="Clique para abrir a carta de amor">
+    <div id="envelopeContent">Carta para Thaylla Mariane</div>
+  </div>
+
+  <div id="siteContent" aria-hidden="true" style="display:none;">
+    <main class="container" role="main" aria-label="Mensagem de amor para Thaylla Mariane">
+      <div class="heart" aria-hidden="true">❤</div>
+      <h1 class="content-title">Para Thaylla Mariane</h1>
+      <h2>Nosso amor desde 27/09/2023</h2>
+      <p class="message" aria-live="polite">
+        "Amar você é descobrir todos os dias motivos para sorrir, para sonhar e para ser feliz. Que nosso amor continue crescendo com ternura, carinho e cumplicidade."
+      </p>
+      <div class="countdown" aria-live="assertive" aria-atomic="true" id="timeTogether" title="Tempo desde o início do namoro">
+        Carregando...
+      </div>
+      <footer>Feito com amor para você, minha Thaylla Mariane.</footer>
+    </main>
+  </div>
+
+  <!-- Modal para ampliar as fotos -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Visualização da foto ampliada">
+    <button class="modal-close" aria-label="Fechar visualização">&times;</button>
+    <div class="modal-content" tabindex="0">
+      <img src="" alt="" id="modalImage" />
+    </div>
+  </div>
+
+  <script>
+    const envelopeOverlay = document.getElementById('envelopeOverlay');
+    const siteContent = document.getElementById('siteContent');
+
+    envelopeOverlay.addEventListener('click', openEnvelope);
+    envelopeOverlay.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openEnvelope();
+      }
+    });
+
+    function openEnvelope() {
+      envelopeOverlay.style.animation = 'openEnvelopeAnim 1.2s forwards';
+      envelopeOverlay.style.pointerEvents = 'none';
+      setTimeout(() => {
+        envelopeOverlay.style.display = 'none';
+        siteContent.style.display = 'block';
+        siteContent.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'auto';
+        startPhotoAnimation();
+      }, 1200);
+    }
+
+    const style = document.createElement('style');
+    style.textContent = `
+    @keyframes openEnvelopeAnim {
+      0% { transform: scale(1) rotateY(0deg); opacity: 1; }
+      100% { transform: scale(1.6) rotateY(180deg); opacity: 0; }
+    }`;
+    document.head.appendChild(style);
+
+    const allPhotos = [
+      "https://i.imgur.com/hdvYGWu.jpeg",
+      "https://i.imgur.com/BjKR2sl.jpeg",
+      "https://i.imgur.com/3yhPhMg.jpeg",
+      "https://i.imgur.com/U1IJPye.jpeg",
+      "https://i.imgur.com/RGl3Vjp.jpeg",
+      "https://i.imgur.com/DihovPQ.jpeg",
+      "https://i.imgur.com/jhgPEE5.jpeg",
+      "https://i.imgur.com/CiF1e87.jpeg",
+      "https://i.imgur.com/6ExQF2I.jpeg",
+      "https://i.imgur.com/cVkPQEq.jpeg",
+      "https://i.imgur.com/AIomgPP.jpeg"
+    ];
+
+    function calculateDetailedTime(startDate, now) {
+      let years = now.getFullYear() - startDate.getFullYear();
+      let months = now.getMonth() - startDate.getMonth();
+      let days = now.getDate() - startDate.getDate();
+      let hours = now.getHours() - startDate.getHours();
+      let minutes = now.getMinutes() - startDate.getMinutes();
+      let seconds = now.getSeconds() - startDate.getSeconds();
+
+      if (seconds < 0) {
+        seconds += 60;
+        minutes--;
+      }
+      if (minutes < 0) {
+        minutes += 60;
+        hours--;
+      }
+      if (hours < 0) {
+        hours += 24;
+        days--;
+      }
+      if (days < 0) {
+        let prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+        days += prevMonth.getDate();
+        months--;
+      }
+      if (months < 0) {
+        months += 12;
+        years--;
+      }
+
+      return { years, months, days, hours, minutes, seconds };
+    }
+
+    function formatPlural(value, singular, plural) {
+      return `${value} ${value === 1 ? singular : plural}`;
+    }
+
+    function updateDetailedCountdown() {
+      const startDate = new Date(2023, 8, 27);
+      const now = new Date();
+
+      const { years, months, days, hours, minutes, seconds } = calculateDetailedTime(startDate, now);
+      const element = document.getElementById('timeTogether');
+
+      let parts = [];
+      if (years > 0) parts.push(formatPlural(years, 'ano', 'anos'));
+      if (months > 0 || years > 0) parts.push(formatPlural(months, 'mês', 'meses'));
+      parts.push(formatPlural(days, 'dia', 'dias'));
+      parts.push(formatPlural(hours, 'hora', 'horas'));
+      parts.push(formatPlural(minutes, 'minuto', 'minutos'));
+      parts.push(formatPlural(seconds, 'segundo', 'segundos'));
+
+      element.textContent = parts.join(', ');
+    }
+
+    updateDetailedCountdown();
+    setInterval(updateDetailedCountdown, 1000);
+
+    let animatedPhotos = [];
+
+    function createDynamicPhotosOutsideContainer() {
+      const container = document.querySelector('.container');
+      const containerRect = container.getBoundingClientRect();
+
+      animatedPhotos = allPhotos.map((src, index) => {
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = `Foto decorativa ${index + 1}`;
+        img.className = 'dynamic-photo';
+
+        const size = 80 + Math.random() * 80;
+        img.style.width = `${size}px`;
+        img.style.height = `${size}px`;
+
+        const leftSpace = containerRect.left;
+        const rightSpace = window.innerWidth - containerRect.right;
+        const placeLeft = Math.random() < 0.5;
+        let x = 0;
+        if (placeLeft)
+          x = Math.random() * (leftSpace - size - 10) + 10;
+        else
+          x = containerRect.right + Math.random() * (rightSpace - size - 10) + 10;
+        const y = Math.random() * (window.innerHeight - size - 20) + 10;
+
+        img.style.left = `${x}px`;
+        img.style.top = `${y}px`;
+        img.style.opacity = 0.5 + Math.random() * 0.3;
+
+        img.tabIndex = 0;
+        img.addEventListener('click', () => openModal(img.src, img.alt));
+        img.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openModal(img.src, img.alt);
+          }
+        });
+
+        document.body.appendChild(img);
+
+        return {
+          element: img,
+          x,
+          y,
+          size,
+          vx: (Math.random() * 0.4 + 0.05) * (Math.random() < 0.5 ? 1 : -1),
+          vy: (Math.random() * 0.4 + 0.05) * (Math.random() < 0.5 ? 1 : -1),
+          mass: size // massa proporcional ao tamanho para cálculo
+        };
+      });
+    }
+
+    // Detectar colisão circular aproximada com base na distância e raios
+    function detectCollisionCircles(a, b) {
+      const dx = (a.x + a.size / 2) - (b.x + b.size / 2);
+      const dy = (a.y + a.size / 2) - (b.y + b.size / 2);
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const minDist = (a.size + b.size) / 2;
+      return distance < minDist;
+    }
+
+    // Atualiza velocidades após colisão elástica de bolas com massa e direção
+    function resolveCollision(a, b) {
+      const dx = (a.x + a.size / 2) - (b.x + b.size / 2);
+      const dy = (a.y + a.size / 2) - (b.y + b.size / 2);
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      // Normal
+      const nx = dx / distance;
+      const ny = dy / distance;
+
+      // Relative velocity
+      const vxRel = a.vx - b.vx;
+      const vyRel = a.vy - b.vy;
+
+      // Speed along normal
+      const speed = vxRel * nx + vyRel * ny;
+      if (speed > 0) return; // objetos se afastando, não resolve
+
+      // Coeficiente restituição = 1 (elástica)
+      const e = 1;
+
+      // Impulso scalar
+      const impulse = (-(1 + e) * speed) / (1 / a.mass + 1 / b.mass);
+
+      // Aplica velocidades
+      const impulseX = impulse * nx;
+      const impulseY = impulse * ny;
+
+      a.vx += (impulseX) / a.mass;
+      a.vy += (impulseY) / a.mass;
+      b.vx -= (impulseX) / b.mass;
+      b.vy -= (impulseY) / b.mass;
+    }
+
+    function animatePhotos() {
+      const container = document.querySelector('.container');
+      const containerRect = container.getBoundingClientRect();
+
+      for (let i = 0; i < animatedPhotos.length; i++) {
+        const photo = animatedPhotos[i];
+
+        photo.x += photo.vx;
+        photo.y += photo.vy;
+
+        // Colisao com fronteira lateral esquerda
+        if (photo.x <= 10) {
+          photo.x = 10;
+          photo.vx = Math.abs(photo.vx);
+        }
+        // frente do container - borde lateral direita da faixa esquerda
+        if (photo.x + photo.size >= containerRect.left - 10 && photo.x < containerRect.left) {
+          photo.x = containerRect.left - 10 - photo.size;
+          photo.vx = -Math.abs(photo.vx);
+        }
+        // faixa direita lado esquerdo - borde
+        if (photo.x >= containerRect.right + 10 && photo.x + photo.size <= window.innerWidth - 10) {
+          photo.x = containerRect.right + 10;
+          photo.vx = -Math.abs(photo.vx);
+        }
+        // limite extremo direito
+        if (photo.x + photo.size >= window.innerWidth - 10) {
+          photo.x = window.innerWidth - 10 - photo.size;
+          photo.vx = -Math.abs(photo.vx);
+        }
+
+        // topo da tela
+        if (photo.y <= 10) {
+          photo.y = 10;
+          photo.vy = Math.abs(photo.vy);
+        }
+        // parte inferior
+        if (photo.y + photo.size >= window.innerHeight - 10) {
+          photo.y = window.innerHeight - 10 - photo.size;
+          photo.vy = -Math.abs(photo.vy);
+        }
+      }
+
+      // Verificação e resolução de colisões entre todos os pares
+      for (let i = 0; i < animatedPhotos.length; i++) {
+        for (let j = i + 1; j < animatedPhotos.length; j++) {
+          const a = animatedPhotos[i];
+          const b = animatedPhotos[j];
+          if (detectCollisionCircles(a, b)) {
+            resolveCollision(a, b);
+
+            // Ajusta posições para evitar que fiquem grudadas:
+            const dx = (a.x + a.size / 2) - (b.x + b.size / 2);
+            const dy = (a.y + a.size / 2) - (b.y + b.size / 2);
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const overlap = ((a.size + b.size) / 2) - distance;
+            if (overlap > 0) {
+              const pushX = (dx / distance) * (overlap / 2);
+              const pushY = (dy / distance) * (overlap / 2);
+              a.x += pushX;
+              a.y += pushY;
+              b.x -= pushX;
+              b.y -= pushY;
+            }
+          }
+        }
+      }
+
+      // Atualiza estilos das fotos
+      animatedPhotos.forEach(photo => {
+        photo.element.style.left = `${photo.x}px`;
+        photo.element.style.top = `${photo.y}px`;
+      });
+
+      requestAnimationFrame(animatePhotos);
+    }
+
+    let animationStarted = false;
+
+    function startPhotoAnimation() {
+      if (animationStarted) return;
+      animationStarted = true;
+      animatedPhotos = [];
+      document.querySelectorAll('.dynamic-photo').forEach(img => img.remove());
+      createDynamicPhotosOutsideContainer();
+      animatePhotos();
+    }
+
+    function createDynamicPhotosOutsideContainer() {
+      const container = document.querySelector('.container');
+      const containerRect = container.getBoundingClientRect();
+
+      animatedPhotos = allPhotos.map((src, index) => {
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = `Foto decorativa ${index + 1}`;
+        img.className = 'dynamic-photo';
+
+        const size = 80 + Math.random() * 80;
+        img.style.width = `${size}px`;
+        img.style.height = `${size}px`;
+
+        const leftSpace = containerRect.left;
+        const rightSpace = window.innerWidth - containerRect.right;
+        const placeLeft = Math.random() < 0.5;
+        let x = 0;
+        if (placeLeft) x = Math.random() * (leftSpace - size - 10) + 10;
+        else x = containerRect.right + Math.random() * (rightSpace - size - 10) + 10;
+
+        const y = Math.random() * (window.innerHeight - size - 20) + 10;
+
+        img.style.left = `${x}px`;
+        img.style.top = `${y}px`;
+        img.style.opacity = 0.5 + Math.random() * 0.3;
+
+        img.tabIndex = 0;
+        img.addEventListener('click', () => openModal(img.src, img.alt));
+        img.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openModal(img.src, img.alt);
+          }
+        });
+
+        document.body.appendChild(img);
+
+        return {
+          element: img,
+          x,
+          y,
+          size,
+          vx: (Math.random() * 0.3 + 0.05) * (Math.random() < 0.5 ? 1 : -1),
+          vy: (Math.random() * 0.3 + 0.05) * (Math.random() < 0.5 ? 1 : -1),
+          mass: size
+        };
+      });
+    }
+
+    const modal = document.getElementById('modal');
+    const modalImage = document.getElementById('modalImage');
+    const modalCloseBtn = modal.querySelector('.modal-close');
+
+    function openModal(imgSrc, imgAlt) {
+      modalImage.src = imgSrc;
+      modalImage.alt = imgAlt;
+      modal.classList.add('show');
+      modalImage.focus();
+      document.body.style.overflow = 'hidden';
+      animationStarted = false;
+    }
+
+    function closeModal() {
+      modal.classList.remove('show');
+      modalImage.src = '';
+      modalImage.alt = '';
+      document.body.style.overflow = '';
+      startPhotoAnimation();
+    }
+
+    modalCloseBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', e => {
+      if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modal.classList.contains('show')) closeModal();
+    });
+
+    window.addEventListener('load', () => {
+      startPhotoAnimation();
+    });
+
+    window.addEventListener('resize', () => {
+      document.querySelectorAll('.dynamic-photo').forEach(img => img.remove());
+      animationStarted = false;
+      startPhotoAnimation();
+    });
+  </script>
 </body>
 </html>

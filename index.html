@@ -119,7 +119,7 @@
     border-radius: 12px;
     box-shadow: 0 6px 15px rgba(219, 112, 147, 0.5);
     object-fit: cover;
-    opacity: 0.25;
+    opacity: 0.5; /* alterado para mais visível */
     transition: opacity 0.3s ease;
     cursor: pointer;
     user-select: none;
@@ -128,7 +128,7 @@
     will-change: transform, opacity;
   }
   .dynamic-photo:hover {
-    opacity: 0.6;
+    opacity: 0.8; /* correspondendo o hover para mais visível também */
     transform: scale(1.1);
     z-index: 20;
     filter: drop-shadow(0 5px 10px rgba(219, 112, 147, 0.8));
@@ -295,25 +295,23 @@
   // Criar fotos dinamicamente com posições e tamanhos variados
   function createDynamicPhotos() {
     const body = document.body;
-    const colors = ['#D81E5B', '#A71C45', '#F9A8D4']; // para sombras, opção
     allPhotos.forEach((src, index) => {
       const img = document.createElement('img');
       img.src = src;
       img.alt = `Foto decorativa ${index + 1}`;
       img.className = 'dynamic-photo';
-      // Definir tamanho aleatório entre 80 e 160 pixels
+      // Tamanho aleatório entre 80 e 160 pixels
       const size = 80 + Math.random() * 80;
       img.style.width = `${size}px`;
       img.style.height = `${size}px`;
-      // Definir posição aleatória dentro da viewport, com margem para evitar cortes
+      // Posição aleatória dentro da viewport com margem
       const padding = 50;
       const maxX = window.innerWidth - size - padding;
       const maxY = window.innerHeight - size - padding;
       img.style.left = `${Math.random() * maxX + padding/2}px`;
       img.style.top = `${Math.random() * maxY + padding/2}px`;
-      // Definir opacidade suavizada por distância (opcional)
-      img.style.opacity = 0.25 + Math.random() * 0.3;
-      // Adicionar evento para abrir modal ao clicar
+      img.style.opacity = 0.5 + Math.random() * 0.3; // opacidade mais visível
+      // Evento para abrir modal
       img.tabIndex = 0;
       img.addEventListener('click', () => openModal(img.src, img.alt));
       img.addEventListener('keydown', e => {
@@ -326,7 +324,6 @@
     });
   }
 
-  // Modal para visualização das fotos ampliadas
   const modal = document.getElementById('modal');
   const modalImage = document.getElementById('modalImage');
   const modalCloseBtn = modal.querySelector('.modal-close');
@@ -358,18 +355,11 @@
     }
   });
 
-  // Inicializa fotos dinâmicas na página
-  window.addEventListener('load', () => {
-    createDynamicPhotos();
-  });
-
-  // Também refaz posicionamento se janela for redimensionada
+  window.addEventListener('load', createDynamicPhotos);
   window.addEventListener('resize', () => {
-    // Remove fotos antigas
     document.querySelectorAll('.dynamic-photo').forEach(img => img.remove());
     createDynamicPhotos();
   });
 </script>
 </body>
 </html>
-
